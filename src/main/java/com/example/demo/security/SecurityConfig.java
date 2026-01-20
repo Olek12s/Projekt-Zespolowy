@@ -29,25 +29,13 @@ public class SecurityConfig
     {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        //.requestMatchers("/api/auth/**").permitAll()
-                        //.authorizeHttpRequests()
-                        //.requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        //.requestMatchers("/api/users/self").hasAnyRole("USER", "ADMIN")
-                        //.requestMatchers("/api/users/**").hasRole("ADMIN")
                         // PUBLIC
-                        .requestMatchers("/api/users/register", "/api/auth/login").permitAll()
-                        .requestMatchers("/api/payments/webhook").permitAll()
-                        .requestMatchers("/api/payments/success", "/api/payments/cancel").permitAll()
 
                         // ADMIN
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // W JWT: ROLE_ADMIN
 
                         // USER + ADMIN
-                        .requestMatchers("/api/users/self").hasAnyRole("USER", "ADMIN")
 
                         // USER
-                        .requestMatchers(HttpMethod.GET, "/api/vehicles/available").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole("USER", "ADMIN")
 
                         // RESZTA
                         .anyRequest().authenticated()
