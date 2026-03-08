@@ -20,11 +20,6 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    private String address;
-
-    @Column(nullable = false)
-    private boolean deleted = false;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
@@ -39,7 +34,6 @@ public class User {
         this.id = builder.id;
         this.login = builder.login;
         this.password = builder.password;
-        this.address = builder.address;
         this.roles = builder.roles;
     }
 
@@ -47,13 +41,11 @@ public class User {
         private String id;
         private String login;
         private String password;
-        private String address;
         private Set<Role> roles;
 
         public Builder id(String id) { this.id = id; return this; }
         public Builder login(String login) { this.login = login; return this; }
         public Builder password(String password) { this.password = password; return this; }
-        public Builder address(String address) { this.address = address; return this; }
         public Builder roles(Set<Role> roles) { this.roles = roles; return this; }
 
         public User build() { return new User(this); }
@@ -67,12 +59,6 @@ public class User {
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
-
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
-
-    public boolean isDeleted() { return deleted; }
-    public void setDeleted(boolean deleted) { this.deleted = deleted; }
 
     public Set<Role> getRoles() { return roles; }
     public void setRoles(Set<Role> roles) { this.roles = roles; }

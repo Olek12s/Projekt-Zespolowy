@@ -29,7 +29,7 @@ public class UserService {
             throw new IllegalArgumentException("User with this login already exists");
         }
 
-        Role userRole = roleRepository.findByName("ROLE_USER")
+        Role userRole = roleRepository.findByRole("ROLE_USER")
                 .orElseThrow(() -> new IllegalStateException("ROLE_USER not found"));
 
         User user = new User();

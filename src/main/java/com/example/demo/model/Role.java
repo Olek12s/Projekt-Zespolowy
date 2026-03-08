@@ -2,9 +2,6 @@ package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.Set;
 
@@ -17,7 +14,7 @@ public class Role {
     private String id;
 
     @Column(nullable = false, unique = true)
-    private String name;
+    private String role;
 
     @ManyToMany(mappedBy = "roles")
     @JsonIgnore
@@ -26,8 +23,8 @@ public class Role {
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
     public Set<User> getUsers() { return users; }
     public void setUsers(Set<User> users) { this.users = users; }
