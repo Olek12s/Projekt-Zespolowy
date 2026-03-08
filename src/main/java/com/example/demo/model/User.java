@@ -5,28 +5,75 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Entity
-@Table(name = "users") //'user' postgres odrzuca
-@Getter
-@Setter
-@NoArgsConstructor
-public class User
-{
+@Table(name = "users") // 'user' postgres odrzuca
+public class User {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id; // UUID
 
     @Column(nullable = false, unique = true)
-    private String username;
-
-    @Column(nullable = false, unique = true)
-    private String email;
+    private String login;
 
     @Column(nullable = false)
     private String password;
 
-    private int points = 1000; //losowo domyślna
+    private String address;
 
-    private String role;
+    @Column(nullable = false)
+    private boolean deleted = false;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles;
+
+    public User() {}
+
+    private User(Builder builder) {
+        this.id = builder.id;
+        this.login = builder.login;
+        this.password = builder.password;
+        this.address = builder.address;
+        this.roles = builder.roles;
+    }
+
+    public static class Builder {
+        private String id;
+        private String login;
+        private String password;
+        private String address;
+        private Set<Role> roles;
+
+        public Builder id(String id) { this.id = id; return this; }
+        public Builder login(String login) { this.login = login; return this; }
+        public Builder password(String password) { this.password = password; return this; }
+        public Builder address(String address) { this.address = address; return this; }
+        public Builder roles(Set<Role> roles) { this.roles = roles; return this; }
+
+        public User build() { return new User(this); }
+    }
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
+    public String getLogin() { return login; }
+    public void setLogin(String login) { this.login = login; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+    public boolean isDeleted() { return deleted; }
+    public void setDeleted(boolean deleted) { this.deleted = deleted; }
+
+    public Set<Role> getRoles() { return roles; }
+    public void setRoles(Set<Role> roles) { this.roles = roles; }
 }
