@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.UserRequest;
 import com.example.demo.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,7 @@ public class UserController {
     public UserController(UserService userService) { this.userService = userService; }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserRequest request) {
+    public ResponseEntity<String> register(@Valid @RequestBody UserRequest request) {
         try {
             userService.register(request);
             return ResponseEntity.status(HttpStatus.CREATED)

@@ -25,6 +25,15 @@ public class UserService {
     }
 
     public void register(UserRequest request) {
+
+        if (request.getLogin() == null || request.getLogin().isBlank()) {
+            throw new IllegalArgumentException("Login cannot be empty");
+        }
+
+        if (request.getLogin().length() < 3 || request.getLogin().length() > 20) {
+            throw new IllegalArgumentException("Login must be between 3 and 20 characters");
+        }
+
         if (userRepository.findByLogin(request.getLogin()).isPresent()) {
             throw new IllegalArgumentException("User with this login already exists");
         }
