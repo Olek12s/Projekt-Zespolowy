@@ -1,0 +1,56 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table game_results {
+  game_id varchar(255) [primary key]
+  termination_id varchar(255) [not null]
+  winner_id varchar(255)
+  terminated_by varchar(255)
+}
+
+Table game_terminations {
+  id varchar(255) [primary key]
+  termination varchar(255) [not null, unique]
+}
+
+Table games {
+  id varchar(255) [primary key]
+  white_player_id varchar(255) [not null]
+  black_player_id varchar(255) [not null]
+  pgn text [not null]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  finished_at timestamp
+}
+
+Table roles {
+  id varchar(255) [primary key]
+  role varchar(255) [not null, unique]
+}
+
+Table users {
+  id varchar(255) [primary key]
+  login varchar(255) [not null, unique]
+  password varchar(255) [not null]
+}
+
+Table user_roles {
+  user_id varchar(255)
+  role_id varchar(255)
+
+  indexes {
+    (user_id, role_id) [pk]
+  }
+}
+
+// Relations
+
+Ref: game_results.game_id > games.id
+Ref: game_results.termination_id > game_terminations.id
+Ref: game_results.winner_id > users.id
+Ref: game_results.terminated_by > users.id
+
+Ref: games.white_player_id > users.id
+Ref: games.black_player_id > users.id
+
+Ref: user_roles.user_id > users.id
+Ref: user_roles.role_id > roles.id
