@@ -19,6 +19,13 @@ public class GameController {
         this.gameService = gameService;
     }
 
+    @GetMapping("/{id}/pgn")
+    public ResponseEntity<String> getPgnById(@PathVariable String id) {
+        return gameService.getById(id)
+                .map(game -> ResponseEntity.ok(game.getPgn()))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping
     public ResponseEntity<List<Game>> getAll() {
         return ResponseEntity.ok(gameService.getAll());
