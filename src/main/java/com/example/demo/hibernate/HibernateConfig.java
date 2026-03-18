@@ -1,5 +1,4 @@
 package com.example.demo.hibernate;
-import com.example.demo.model.MatchHistory;
 import com.example.demo.model.User;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.hibernate.SessionFactory;
@@ -30,7 +29,6 @@ public class HibernateConfig {
                 configuration.setProperties(settings);
 
                 configuration.addAnnotatedClass(User.class);
-                configuration.addAnnotatedClass(MatchHistory.class);
 //                configuration.addAnnotatedClass(Friends.class);
 
                 sessionFactory = configuration.buildSessionFactory();
