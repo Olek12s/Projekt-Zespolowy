@@ -68,7 +68,7 @@ public class SecurityConfig
                         // GAMES - READ (USER + ADMIN)
                         .requestMatchers(HttpMethod.GET, "/api/games/**").hasAnyRole("USER", "ADMIN")
 
-                        // GAME RESULTS - READ (USER + ADMIN)
+                        //// GAME RESULTS - READ (USER + ADMIN)
                         .requestMatchers(HttpMethod.GET, "/api/game-results/**").hasAnyRole("USER", "ADMIN")
 
                         // ADMIN ONLY - WRITE
