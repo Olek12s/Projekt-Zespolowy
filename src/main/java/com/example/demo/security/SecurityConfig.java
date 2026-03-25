@@ -45,15 +45,16 @@ public class SecurityConfig
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // PUBLIC
+                        .requestMatchers("/api/auth/login", "/api/users/register").permitAll()
 
                         // ADMIN
+                        .requestMatchers("/api/games", "/api/game-results", "/api/game-terminations/**").hasRole("ADMIN")
 
                         // USER + ADMIN
+                        .requestMatchers("/api/games/**", "/api/game-results/**").hasAnyRole("USER", "ADMIN")
 
-                        // USER
-
-                        // RESZTA
-                        .anyRequest().permitAll()   // authenticated() TODO: odkomentować poniższe w momencie pracy nad tokenami. Na ten moment security jest wyłączone (off).
+                        // USER / RESZTA ZALOGOWANA
+                        .anyRequest().authenticated()   // authenticated() (logged in) / permitAll() (no token)
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
