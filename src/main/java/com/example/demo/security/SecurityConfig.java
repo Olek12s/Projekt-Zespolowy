@@ -3,6 +3,7 @@ package com.example.demo.security;
 import jakarta.servlet.Filter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -43,20 +44,44 @@ public class SecurityConfig
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter, AuthenticationProvider authenticationProvider) throws Exception
     {
         http.csrf(csrf -> csrf.disable())
+//                .authorizeHttpRequests(auth -> auth
+//                        // PUBLIC
+//                        .requestMatchers("/api/auth/login", "/api/users/register").permitAll()
+//
+//                        // ADMIN
+//                        .requestMatchers("/api/games", "/api/game-results", "/api/game-terminations/**").hasRole("ADMIN")
+//
+//                        // USER + ADMIN
+//                        .requestMatchers("/api/games/**", "/api/game-results/**").hasAnyRole("USER", "ADMIN")
+//
+//                        // USER / RESZTA ZALOGOWANA
+//                        .anyRequest().authenticated()   // authenticated() (logged in) / permitAll() (no token)
+//
+////                        .anyRequest().permitAll()
+//                )
+
                 .authorizeHttpRequests(auth -> auth
+
                         // PUBLIC
                         .requestMatchers("/api/auth/login", "/api/users/register").permitAll()
 
-                        // ADMIN
-                        .requestMatchers("/api/games", "/api/game-results", "/api/game-terminations/**").hasRole("ADMIN")
+                        // GAMES - READ (USER + ADMIN)
+                        .requestMatchers(HttpMethod.GET, "/api/games/**").hasAnyRole("USER", "ADMIN")
 
-                        // USER + ADMIN
-                        .requestMatchers("/api/games/**", "/api/game-results/**").hasAnyRole("USER", "ADMIN")
+                        // GAME RESULTS - READ (USER + ADMIN)
+                        .requestMatchers(HttpMethod.GET, "/api/game-results/**").hasAnyRole("USER", "ADMIN")
 
-                        // USER / RESZTA ZALOGOWANA
-                        .anyRequest().authenticated()   // authenticated() (logged in) / permitAll() (no token)
+                        // ADMIN ONLY - WRITE
+                        .requestMatchers(HttpMethod.POST, "/api/games").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/games/**").hasRole("ADMIN")
 
-//                        .anyRequest().permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/game-results").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/game-results/**").hasRole("ADMIN")
+
+                        .requestMatchers("/api/game-terminations/**").hasRole("ADMIN")
+
+                        // REST
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
