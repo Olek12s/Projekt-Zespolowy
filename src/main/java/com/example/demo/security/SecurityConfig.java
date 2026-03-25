@@ -55,6 +55,8 @@ public class SecurityConfig
 
                         // USER / RESZTA ZALOGOWANA
                         .anyRequest().authenticated()   // authenticated() (logged in) / permitAll() (no token)
+
+//                        .anyRequest().permitAll()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
