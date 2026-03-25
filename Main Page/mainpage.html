@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="mainpage.ts"></script>
+        <style>
+            body
+            {
+                background-image: url("demoBackgroundImage2.png");
+            }
+            .topbarButton{
+                background-color: gray;
+                border: none;
+                color: white;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 32px;
+                font-weight: bold;
+                margin: 4px 2px;
+                cursor: pointer;
+            }
+            .mainMenuButton{
+                background-color: lightseagreen;
+                border: none;
+                color: white;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 32px;
+                font-weight: bold;
+                margin: 4px 2px;
+                cursor: pointer;
+            }
+            .top{
+                display: flex;
+                justify-content: right;
+                align-items: center;
+                background-color: gray;
+            }
+            .center {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        </style>
+    </head>
+    <body style="margin: 0; padding: 0;">
+        <div class="top" style="margin-bottom: 5%">
+            <img src="profilepic.jpg" style="height:64px;">
+            <button class="topbarButton" onclick="myAccountButtonClicked()">My Account</button>
+        </div>
+        <div class="center">
+            <button class="mainMenuButton" onclick="playButtonClicked()">Play</button>
+        </div>
+        <div class="center">
+            <button class="mainMenuButton" onclick="spectateButtonClicked()">Spectate</button>
+        </div>
+        <div class="center">
+            <button class="mainMenuButton" onclick="rankingButtonClicked()">Ranking</button>
+        </div>
+        <div class="center">            
+            <button class="mainMenuButton" onclick="historyButtonClicked()">History</button>
+        </div>
+        <div class="center">            
+            <button class="mainMenuButton" onclick="myAccountButtonClicked()">My Account</button>
+        </div>
+        <div class="center">            
+            <button class="mainMenuButton" onclick="friendsButtonClicked()">Friends</button>
+        </div>
+    </body>
+</html>

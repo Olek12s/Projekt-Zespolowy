@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body
+            {
+                background-image: url("demoBackgroundImage2.png");
+            }
+        </style>
+    </head>
+
+    <body>
+    
+        <table align="center">
+
+            <tr><td align="center"><img src="demoTitleImage.png" height="300"></td></tr>
+
+            <tr><td align="center"><input type="text" id="login" value=""></td></tr>
+
+            <tr><td align="center"><input type="password" id="password" value=""></td></tr>
+
+            <tr><td align="center"><button onclick="signIn()">Sign In</button></td></tr>
+
+            <tr><td align="center"><p id="demo" style="color: red"></p></td></tr>
+
+            <tr><td align="center"><img src="demoBottomImage.png" width="800"></td></tr>
+
+        </table>
+
+        <script>
+            function signIn() 
+            {
+                var result = document.getElementById("login").value.concat("/", document.getElementById("password").value);
+                document.getElementById("demo").innerHTML = result;
+            }
+        </script>
+    </body>
+</html>
+
