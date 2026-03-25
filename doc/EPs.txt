@@ -1,0 +1,80 @@
+POST /api/auth/login		- logowanie uzytkownika (all)
+http://localhost:8089/api/auth/login
+
+Body:
+{
+  "login": "string",
+  "password": "string"
+}
+
+
+
+POST /api/users/register	- rejestracja uzytkownika http://localhost:8089/api/users/register (all)
+
+Body:
+{
+  "login": "string",
+  "password": "string"
+}
+
+
+GET /api/games				- pobiera wszystkie rozegrane partie (authenticated)
+http://localhost:8089/api/games
+
+GET /api/games/{id}			- pobiera partie po Id (authenticated)
+http://localhost:8089/api/games/{id}
+
+GET /api/games/{id}/pgn			- pobiera zapis pgn partii po Id (authenticated)
+http://localhost:8089/api/games/{id}/pgn
+
+GET /api/games/player/{userId}/stats 	- pobiera statystyki gracza (authenticated)
+http://localhost:8089/api/games/player/{userId}/stats
+
+POST /api/games				- tworzy nową partię (admin)
+http://localhost:8089/api/games
+
+Body:
+{
+  "id": "game-123",
+  "whitePlayer": {
+    "id": "user-1"
+  },
+  "blackPlayer": {
+    "id": "user-2"
+  },
+  "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bb5 a6",
+  "createdAt": "2026-03-25T00:00:00",
+  "finishedAt": "2026-03-25T00:30:00"
+}
+
+DELETE /api/games/{id}			- usuwa partię po Id (admin)
+http://localhost:8089/api/games/{id}
+
+GET /api/game-results			- lista wszystkich wynikow gier (authenticated)
+http://localhost:8089/api/game-results
+
+GET /api/game-results{gameId}		- wynik gry po Id (authenticated)
+http://localhost:8089/api/game-results/{gameId}
+
+POST /api/game-results			- post zapisu wyniku gry (admin)
+http://localhost:8089/api/game-results
+
+Body:
+{
+  "gameId": "game-123",
+  "termination": {
+    "id": "checkmate"
+  },
+  "winner": {
+    "id": "user-1"
+  },
+  "terminatedBy": {
+    "id": "user-1"
+  }
+}
+
+DELETE /api/game-results/{gameId}	- usuwanie wyniku gry po Id (admin)
+http://localhost:8089/api/game-results/{gameId}
+
+GET /api/game-terminations		- listowanie mozliwych zakocnzen gry (admin)
+http://localhost:8089/api/game-terminations
