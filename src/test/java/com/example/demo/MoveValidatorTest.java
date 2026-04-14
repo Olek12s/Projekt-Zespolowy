@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import com.example.demo.service.MoveValidator;
+import com.example.demo.util.MoveValidator;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertTrue;
 
