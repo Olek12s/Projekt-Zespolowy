@@ -71,6 +71,10 @@ public class SecurityConfig
                         //SWAGGER
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
+
+                        // WEB SOCKET
+                        .requestMatchers("/ws/**").permitAll()
+
                         // PUBLIC
                         .requestMatchers("/api/auth/login", "/api/users/register").permitAll()
 
