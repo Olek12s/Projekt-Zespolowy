@@ -14,6 +14,7 @@ public class GameResultController {
 
     private final GameResultService gameResultService;
 
+
     public GameResultController(GameResultService gameResultService) {
         this.gameResultService = gameResultService;
     }

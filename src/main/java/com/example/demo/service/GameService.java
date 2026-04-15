@@ -6,12 +6,19 @@ import com.example.demo.model.User;
 import com.example.demo.repository.GameRepository;
 import com.example.demo.repository.GameResultRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.util.EloRating;
+import com.example.demo.util.MatchOutcome;
+import com.example.demo.util.Pair;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static com.example.demo.util.MatchOutcome.resolveOutcome;
 
 @Service
 public class GameService {
@@ -65,4 +72,29 @@ public class GameService {
 
         return stats;
     }
+
+    @Transactional
+    public void finishGame(Game game, GameResult result) {
+
+        MatchOutcome outcome = resolveOutcome(result, game);
+
+        game.setFinishedAt(LocalDateTime.now());
+
+        Pair<Double, Double> newRatings =
+                EloRating.getOutcome(
+                        game.getWhitePlayer().getElo(),
+                        game.getBlackPlayer().getElo(),
+                        outcome
+                );
+
+        game.getWhitePlayer().setElo(newRatings.first());
+        game.getBlackPlayer().setElo(newRatings.second());
+
+        userRepository.save(game.getWhitePlayer());
+        userRepository.save(game.getBlackPlayer());
+        gameRepository.save(game);
+    }
+
+    // TODO: finish
+    public void terminateGame(String gameId) {}
 }
