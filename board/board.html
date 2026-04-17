@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<head>
+    <style>
+        .row
+        {
+            padding-left: 30%;
+            display: grid;
+            grid-template-columns: 5% 5% 5% 5% 5% 5% 5% 5%;
+            width: 100%;
+        }
+        .field
+        {
+            aspect-ratio: 1/1;
+            justify-content: center;
+            align-content: center;
+        }
+        #black 
+        {
+
+            background-color: darkslategrey;
+        }
+        #white 
+        {
+            background-color:lightcyan;
+        }
+    </style>
+    <script>
+        function dragstartHandler(ev) 
+        {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+        
+        function dragoverHandler(ev) 
+        {
+            ev.preventDefault();
+        }
+
+        function dropHandler(ev) 
+        {
+            ev.preventDefault();
+            const data = ev.dataTransfer.getData("text");
+            ev.target.appendChild(document.getElementById(data));
+        }
+    </script>
+</head>
+<body style="background-color: aquamarine;">
+    <div class="row">
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="blackRook1" src="blackRook.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="blackKnight1" src="blackKnight.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="blackBishop1" src="blackBishop.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="blackQueen" src="blackQueen.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="blackKing" src="blackKing.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="blackBishop2" src="blackBishop.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="blackKnight2" src="blackKnight.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="blackRook2" src="blackRook.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+    </div>
+    <div class="row">
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="blackPawn1" src="blackPawn.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="blackPawn2" src="blackPawn.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="blackPawn3" src="blackPawn.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="blackPawn4" src="blackPawn.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="blackPawn5" src="blackPawn.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="blackPawn6" src="blackPawn.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="blackPawn7" src="blackPawn.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">            
+            <img id="blackPawn8" src="blackPawn.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+    </div>
+    <div class="row">
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+    </div>
+    <div class="row">
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+    </div>
+    <div class="row">
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+    </div>
+    <div class="row">
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"></div>
+    </div>
+    <div class="row">
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="whitePawn1" src="whitePawn.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="whitePawn2" src="whitePawn.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="whitePawn3" src="whitePawn.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="whitePawn4" src="whitePawn.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="whitePawn5" src="whitePawn.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="whitePawn6" src="whitePawn.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="whitePawn7" src="whitePawn.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">            
+            <img id="whitePawn8" src="whitePawn.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+    </div>
+    <div class="row">
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="whiteRook1" src="whiteRook.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="whiteKnight1" src="whiteKnight.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="whiteBishop1" src="whiteBishop.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="whiteQueen" src="whiteQueen.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="whiteKing" src="whiteKing.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="whiteBishop2" src="whiteBishop.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="black" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="whiteKnight2" src="whiteKnight.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+        <div class="field" id="white" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
+            <img id="whiteRook2" src="whiteRook.png" draggable="true" ondragstart="dragstartHandler(event)" width="100%" height="100%" style="display: block;">
+        </div>
+    </div>
+</body>
