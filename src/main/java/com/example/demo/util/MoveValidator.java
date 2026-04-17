@@ -58,12 +58,15 @@ public class MoveValidator {
             if (piece.type() == PieceType.KING && Math.abs(to.col() - from.col()) == 2) {
                 boolean kingside = to.col() > from.col();
                 int rFrom;
-                int rTo;
                 if (kingside) {
                     rFrom = 7;
-                    rTo = 5;
                 } else {
                     rFrom = 0;
+                }
+                int rTo;
+                if (kingside) {
+                    rTo = 5;
+                } else {
                     rTo = 3;
                 }
                 setPiece(rTo, from.row(), getPiece(rFrom, from.row()));
@@ -116,8 +119,9 @@ public class MoveValidator {
         }
     }
 
+    //główna funkcja
     public boolean isMoveLegal(Chessboard chessboard, String move, boolean whiteToMove) {
-        Move m = parseMove(move);
+        Move m = fromSAN(chessboard, move, whiteToMove);
         if (m == null) return false;
         Piece p = chessboard.getPiece(m.from().col(), m.from().row());
         if (p == null) return false;
@@ -126,6 +130,7 @@ public class MoveValidator {
         return isMoveLegalInternal(chessboard, m, whiteToMove);
     }
 
+    //dla uci
     public Move parseMove(String move) {
         if (move == null || move.length() < 4) return null;
         try {
@@ -179,12 +184,16 @@ public class MoveValidator {
 
     public boolean isCheck(Chessboard chessboard, boolean whiteToMove) {
         PieceColor playerColor;
-        PieceColor enemyColor;
         if (whiteToMove) {
             playerColor = PieceColor.WHITE;
-            enemyColor = PieceColor.BLACK;
         } else {
             playerColor = PieceColor.BLACK;
+        }
+
+        PieceColor enemyColor;
+        if (whiteToMove) {
+            enemyColor = PieceColor.BLACK;
+        } else {
             enemyColor = PieceColor.WHITE;
         }
 
@@ -213,6 +222,7 @@ public class MoveValidator {
 
     public boolean isCheckMate(Chessboard chessboard, boolean whiteToMove) {
         if (!isCheck(chessboard, whiteToMove)) return false;
+
         PieceColor playerColor;
         if (whiteToMove) {
             playerColor = PieceColor.WHITE;
@@ -235,8 +245,10 @@ public class MoveValidator {
         return true;
     }
 
+
     public boolean isStaleMate(Chessboard chessboard, boolean whiteToMove) {
         if (isCheck(chessboard, whiteToMove)) return false;
+
         PieceColor playerColor;
         if (whiteToMove) {
             playerColor = PieceColor.WHITE;
@@ -281,7 +293,6 @@ public class MoveValidator {
 
         if (dy == 0 && dx == 2) {
             boolean kingside = to.col() > from.col();
-
             if (color == PieceColor.WHITE) {
                 if (kingside && !board.whiteCanCastleKingside) return false;
                 if (!kingside && !board.whiteCanCastleQueenside) return false;
@@ -298,6 +309,7 @@ public class MoveValidator {
             } else {
                 rookCol = 0;
             }
+
             if (!isPathClear(board, from, new Square(rookCol, from.row()))) return false;
 
             int middleCol;
@@ -306,13 +318,12 @@ public class MoveValidator {
             } else {
                 middleCol = from.col() - 1;
             }
-            Square middle = new Square(middleCol, from.row());
-            if (isSquareAttacked(board, middle, color)) return false;
+
+            if (isSquareAttacked(board, new Square(middleCol, from.row()), color)) return false;
             if (isSquareAttacked(board, to, color)) return false;
 
             return true;
         }
-
         return false;
     }
 
@@ -323,6 +334,7 @@ public class MoveValidator {
         } else {
             enemyColor = PieceColor.WHITE;
         }
+
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 Piece p = board.getPiece(col, row);
@@ -348,10 +360,8 @@ public class MoveValidator {
     }
 
     private boolean isValidRookMove(Chessboard board, Square from, Square to) {
-        boolean sameCol = from.col() == to.col();
-        boolean sameRow = from.row() == to.row();
-        if (!sameCol && !sameRow) return false;
-        if (sameCol && sameRow) return false;
+        if (from.col() != to.col() && from.row() != to.row()) return false;
+        if (from.col() == to.col() && from.row() == to.row()) return false;
         return isPathClear(board, from, to);
     }
 
@@ -366,12 +376,11 @@ public class MoveValidator {
         } else {
             dir = 1;
         }
+
         int dx = to.col() - from.col();
         int dy = to.row() - from.row();
 
-        if (dx == 0 && dy == dir) {
-            return board.getPiece(to.col(), to.row()) == null;
-        }
+        if (dx == 0 && dy == dir) return board.getPiece(to.col(), to.row()) == null;
 
         int startRow;
         if (color == PieceColor.WHITE) {
@@ -379,6 +388,7 @@ public class MoveValidator {
         } else {
             startRow = 1;
         }
+
         if (dx == 0 && dy == 2 * dir && from.row() == startRow) {
             return board.getPiece(from.col(), from.row() + dir) == null && board.getPiece(to.col(), to.row()) == null;
         }
@@ -388,7 +398,6 @@ public class MoveValidator {
             if (target != null && target.color() != color) return true;
             return to.equals(board.enPassantTarget);
         }
-
         return false;
     }
 
@@ -403,5 +412,195 @@ public class MoveValidator {
             row += dy;
         }
         return true;
+    }
+
+
+    //uci -> SAN
+    public String toSAN(Chessboard board, Move move, boolean whiteToMove) {
+        Piece piece = board.getPiece(move.from().col(), move.from().row());
+        if (piece == null) return "";
+
+        if (piece.type() == PieceType.KING && Math.abs(move.to().col() - move.from().col()) == 2) {
+            if (move.to().col() > move.from().col()) {
+                return "O-O";
+            } else {
+                return "O-O-O";
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        Piece target = board.getPiece(move.to().col(), move.to().row());
+        boolean isCapture = target != null || (piece.type() == PieceType.PAWN && move.to().equals(board.enPassantTarget));
+
+        if (piece.type() != PieceType.PAWN) {
+            sb.append(getCharFromPieceType(piece.type()));
+            sb.append(getDisambiguation(board, move, piece, whiteToMove));
+        } else if (isCapture) {
+            sb.append((char) ('a' + move.from().col()));
+        }
+
+        if (isCapture) sb.append("x");
+        sb.append((char) ('a' + move.to().col()));
+        sb.append(8 - move.to().row());
+
+        if (move.promotion() != null) sb.append("=").append(getCharFromPieceType(move.promotion()));
+
+        if (isCheckMateAfterMove(board, move, whiteToMove)) sb.append("#");
+        else if (isCheckAfterMove(board, move, whiteToMove)) sb.append("+");
+
+        return sb.toString();
+    }
+
+    private String getDisambiguation(Chessboard board, Move move, Piece piece, boolean whiteToMove) {
+        Square from = move.from();
+        Square to = move.to();
+        boolean sameFile = false;
+        boolean sameRank = false;
+        int ambiguousCount = 0;
+
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (col == from.col() && row == from.row()) continue;
+                Piece p = board.getPiece(col, row);
+                if (p != null && p.type() == piece.type() && p.color() == piece.color()) {
+                    if (isMoveLegalInternal(board, new Move(new Square(col, row), to, null), whiteToMove)) {
+                        ambiguousCount++;
+                        if (col == from.col()) sameFile = true;
+                        if (row == from.row()) sameRank = true;
+                    }
+                }
+            }
+        }
+
+        if (ambiguousCount == 0) return "";
+        if (!sameFile) return String.valueOf((char) ('a' + from.col()));
+        if (!sameRank) return String.valueOf(8 - from.row());
+        return "" + (char) ('a' + from.col()) + (8 - from.row());
+    }
+
+    private boolean isCheckAfterMove(Chessboard board, Move move, boolean whiteToMove) {
+        Piece piece = board.getPiece(move.from().col(), move.from().row());
+        Piece captured = board.getPiece(move.to().col(), move.to().row());
+
+        board.setPiece(move.to().col(), move.to().row(), piece);
+        board.setPiece(move.from().col(), move.from().row(), null);
+
+        boolean check = isCheck(board, !whiteToMove);
+
+        board.setPiece(move.from().col(), move.from().row(), piece);
+        board.setPiece(move.to().col(), move.to().row(), captured);
+
+        return check;
+    }
+
+    private boolean isCheckMateAfterMove(Chessboard board, Move move, boolean whiteToMove) {
+        Piece piece = board.getPiece(move.from().col(), move.from().row());
+        Piece captured = board.getPiece(move.to().col(), move.to().row());
+
+        board.setPiece(move.to().col(), move.to().row(), piece);
+        board.setPiece(move.from().col(), move.from().row(), null);
+
+        boolean mate = isCheckMate(board, !whiteToMove);
+
+        board.setPiece(move.from().col(), move.from().row(), piece);
+        board.setPiece(move.to().col(), move.to().row(), captured);
+
+        return mate;
+    }
+
+    private char getCharFromPieceType(PieceType type) {
+        return switch (type) {
+            case KING -> 'K';
+            case QUEEN -> 'Q';
+            case ROOK -> 'R';
+            case BISHOP -> 'B';
+            case KNIGHT -> 'N';
+            default -> ' ';
+        };
+    }
+
+    public Move fromSAN(Chessboard board, String san, boolean whiteToMove) {
+        if (san == null || san.isEmpty()) return null;
+        PieceColor color;
+        if (whiteToMove) {
+            color = PieceColor.WHITE;
+        } else {
+            color = PieceColor.BLACK;
+        }
+
+        if (san.equals("O-O") || san.equals("O-O+") || san.equals("O-O#")) {
+            int row;
+            if (whiteToMove) {
+                row = 7;
+            } else {
+                row = 0;
+            }
+            return new Move(new Square(4, row), new Square(6, row), null);
+        }
+        if (san.equals("O-O-O") || san.equals("O-O-O+") || san.equals("O-O-O#")) {
+            int row;
+            if (whiteToMove) {
+                row = 7;
+            } else {
+                row = 0;
+            }
+            return new Move(new Square(4, row), new Square(2, row), null);
+        }
+
+        String s = san.replaceAll("[+#]$", "");
+
+        PieceType promotion = null;
+        if (s.contains("=")) {
+            char promoChar = s.charAt(s.indexOf('=') + 1);
+            promotion = switch (promoChar) {
+                case 'Q' -> PieceType.QUEEN;
+                case 'R' -> PieceType.ROOK;
+                case 'B' -> PieceType.BISHOP;
+                case 'N' -> PieceType.KNIGHT;
+                default -> PieceType.QUEEN;
+            };
+            s = s.substring(0, s.indexOf('='));
+        }
+
+        PieceType pieceType;
+        if (Character.isUpperCase(s.charAt(0)) && s.charAt(0) != 'O') {
+            pieceType = switch (s.charAt(0)) {
+                case 'K' -> PieceType.KING;
+                case 'Q' -> PieceType.QUEEN;
+                case 'R' -> PieceType.ROOK;
+                case 'B' -> PieceType.BISHOP;
+                case 'N' -> PieceType.KNIGHT;
+                default -> PieceType.PAWN;
+            };
+            s = s.substring(1);
+        } else {
+            pieceType = PieceType.PAWN;
+        }
+
+        s = s.replace("x", "");
+
+        int toCol = s.charAt(s.length() - 2) - 'a';
+        int toRow = 7 - (s.charAt(s.length() - 1) - '1');
+        Square to = new Square(toCol, toRow);
+
+        String disambig = s.substring(0, s.length() - 2);
+        Integer disambigCol = null;
+        Integer disambigRow = null;
+        for (char c : disambig.toCharArray()) {
+            if (c >= 'a' && c <= 'h') disambigCol = c - 'a';
+            else if (c >= '1' && c <= '8') disambigRow = 7 - (c - '1');
+        }
+
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                Piece p = board.getPiece(col, row);
+                if (p == null || p.type() != pieceType || p.color() != color) continue;
+                if (disambigCol != null && col != disambigCol) continue;
+                if (disambigRow != null && row != disambigRow) continue;
+                Move candidate = new Move(new Square(col, row), to, promotion);
+                if (isMoveLegalInternal(board, candidate, whiteToMove)) return candidate;
+            }
+        }
+        return null;
     }
 }
