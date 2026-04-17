@@ -2,26 +2,38 @@ package com.example.demo;
 
 import com.example.demo.util.MoveValidator;
 import org.testng.annotations.Test;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 public class MoveValidatorTest {
 
     private MoveValidator validator = new MoveValidator();
 
     @Test
-    public void testMoves() {
+    public void testFullGame() {
         MoveValidator.Chessboard board = validator.new Chessboard();
-
-        String moves = "d2d4 c7c5 c2c3 c5d4 c3d4 d7d5 b1c3 g8f6 g1f3 g7g6 e2e3 f8g7 f1e2 e8g8 e1g1 e7e6 b2b3 a7a6 c1a3 f8e8 f3e5 b8c6 e5c6 b7c6 c3a4 f6d7 a1c1 c8b7 f2f4 g7f8 a3f8 e8f8 d1d2 d8e7 a4c5 d7c5 d4c5 a6a5 d2c3 f8b8 f1f3 f7f6 e2d3 e6e5 e3e4 d5d4 c3c2 g8h8 c1f1 b8f8 f4f5 g6g5 f3h3 b7a6 d3a6 a8a6 f1c1 a5a4 b3b4 a4a3 c2e2 a6a7 b4b5 c6b5 h3b3 a7c7 e2b5 f8d8 c5c6 e7d6 b5d5 d6d5 e4d5 d8d5 b3b8 h8g7 b8b6 d5d6 g1f2 g7f7 b6b7 c7b7 c6b7 d6b6 c1c7 f7e8 c7c8 e8d7 b7b8q b6b8 c8b8 d7d6 b8h8 d6d5 h8h7 e5e4 h7e7 d5c4 e7e4 c4d3 e4e6 d3c2 e6f6 d4d3 f2e3 d3d2 f6c6 c2b2 e3d2 b2a2 f5f6 a2a1 f6f7 g5g4 f7f8q g4g3 f8a3";
+        String moves = "d4 d5 c4 e6 Nc3 Be7 cxd5 exd5 Bf4 Nf6 e3 Bf5 Nge2 O-O Ng3 Be6 Bd3 c5 dxc5 Bxc5 O-O Nc6 Rc1 Bd6 Nh5 Be7 Nb5 Nxh5 Qxh5 g6 Qf3 Rc8 Rfd1 Qd7 h3 Rfd8 Qg3 Nb4 Nc3 Nxd3 Rxd3 Bf5 Rd2 Qe6 Rcd1 h5 h4 Rc5 f3 Qc6 e4 Rxc3 bxc3 Qb6+ Kh2 dxe4 Rxd8+ Bxd8 Be3 Qa5 Qb8 Qc7+ Qxc7 Bxc7+ Kg1 exf3 gxf3 b6 Kf2 Kf8 Rd4 Ke7 Bf4 Bxf4 Rxf4 Kd6 Ke3 Kc5 Rd4 Be6 a3 a5 Ke4 b5 Ke5 a4 f4 Kc6 Kf6 Kc5 Rb4 Bc4 Ke7 Be6 Re4 Kd5 Rd4+ Kc6 Kd8 Bf5 Ke8 Be6 Kf8 Kc5 Kg7 Kc6 Kg8 Kc5 Kf8 Kc6 Kg7 Kc5 Kh8 Kc6 Kh7 Kc5 Kh6 Bf5 Kg5 Be6 Kf6 Kc6 f5 Bxf5 Kxf7 Kc5 Kf6 Bc2 Ke7 Bf5 Kd8 Kc6 Rf4 Kd6 Rb4 Kc5 Kc7 Bd3 Rd4 Be2 Kb7 Bf1 Ka7 Be2 Re4 Bd3 Rb4 Bc4 Ka6 Kd5 Ka5 Ke5 Rb1 g5 hxg5 Kf5 Rg1 Kg6 Kb4 h4 Kc5 h3 Kd4 Be6 Ke5 Bd7 Kf4 Bc6 Kg3 Kxg5 Rd1 h2 Kxh2 Kf4 c4 bxc4 Rd4+ Ke5 Rxc4 Kd5 Rb4 Kc5 Kg3 Bb5 Kf4 Kb6 Ke3 Ka5 Kd4 Be2 Rb1 Bh5 Re1 Bf7 Kc5 Bb3 Re8 Ka6 Kc6 Ka7 Kb5 Kb7 Re7+ Kc8 Kc6 Kd8 Rd7+ Ke8 Kc7 Bc2 Rd2 Bb3 Re2+ Kf7 Kd6 Bc4 Re7+ Kf8 Re4 Bb3 Kd7 Kf7 Rf4+ Kg6 Kd6 Kg5 Ke5 Kg6 Rf3 Kg7 Rf6 Bc4 Kf5 Bb3 Kg5 Bc2";
         String[] allMoves = moves.split(" ");
         boolean whiteToMove = true;
 
-        for (String move : allMoves) {
-            System.out.println("Ruch poprawny: " + move);
-            assertTrue(validator.isMoveLegal(board, move, whiteToMove), "Ruch nielegalny: " + move);
-            MoveValidator.Move m = validator.parseMove(move);
-            board.makeMove(m);
+        for (int i = 0; i < allMoves.length; i++) {
+            String m = allMoves[i];
+            assertTrue(validator.isMoveLegal(board, m, whiteToMove), "Ruch nielegalny: " + m);
+
+            MoveValidator.Move move = validator.fromSAN(board, m, whiteToMove);
+            board.makeMove(move);
+            System.out.println((i + 1) + ". " + (whiteToMove ? "Biale: " : "Czarne: ") + m);
             whiteToMove = !whiteToMove;
+
+            if (validator.isCheckMate(board, whiteToMove)) {
+                System.out.println("Koniec: Mat na " + (whiteToMove ? "Bialych" : "Czarnych"));
+                break;
+            } else if (validator.isStaleMate(board, whiteToMove)) {
+                System.out.println("Koniec: Pat");
+                break;
+            } else if (validator.isCheck(board, whiteToMove)) {
+                System.out.println("Szach na " + (whiteToMove ? "Bialych" : "Czarnych"));
+            }
         }
+        System.out.println("Koniec: Remis (1/2-1/2)");
     }
 }
