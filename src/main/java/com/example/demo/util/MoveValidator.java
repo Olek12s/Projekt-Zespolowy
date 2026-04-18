@@ -1,5 +1,7 @@
 package com.example.demo.util;
 
+import java.util.Arrays;
+
 public class MoveValidator {
 
     public enum PieceType { KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN }
@@ -116,6 +118,37 @@ public class MoveValidator {
 
             setPiece(to.col(), to.row(), promotedP);
             setPiece(from.col(), from.row(), null);
+        }
+
+        private String pieceToChar(Piece piece) {
+            if (piece == null) return ".";
+
+            return switch (piece.type()) {
+                case KING -> piece.color() == PieceColor.WHITE ? "K" : "k";
+                case QUEEN -> piece.color() == PieceColor.WHITE ? "Q" : "q";
+                case ROOK -> piece.color() == PieceColor.WHITE ? "R" : "r";
+                case BISHOP -> piece.color() == PieceColor.WHITE ? "B" : "b";
+                case KNIGHT -> piece.color() == PieceColor.WHITE ? "N" : "n";
+                case PAWN -> piece.color() == PieceColor.WHITE ? "P" : "b";
+            };
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("  a b c d e f g h\n");
+
+            for (int row = 0; row < 8; row++)
+            {
+                int displayRow = 8 - row;
+                sb.append(displayRow + " ");
+
+                for (int col = 0; col < 8; col++) {
+                    sb.append(pieceToChar(board[row][col]) + " ");
+                }
+                sb.append("\n");
+            }
+            return sb.toString();
         }
     }
 
