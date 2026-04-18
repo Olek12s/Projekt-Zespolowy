@@ -1,8 +1,10 @@
 package com.example.demo;
 
 import com.example.demo.util.MoveValidator;
-import org.testng.annotations.Test;
-import static org.testng.Assert.*;
+
+import static org.hibernate.validator.internal.util.Contracts.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
 
 public class MoveValidatorTest {
 
