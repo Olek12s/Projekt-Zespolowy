@@ -129,7 +129,7 @@ public class MoveValidator {
                 case ROOK -> piece.color() == PieceColor.WHITE ? "R" : "r";
                 case BISHOP -> piece.color() == PieceColor.WHITE ? "B" : "b";
                 case KNIGHT -> piece.color() == PieceColor.WHITE ? "N" : "n";
-                case PAWN -> piece.color() == PieceColor.WHITE ? "P" : "b";
+                case PAWN -> piece.color() == PieceColor.WHITE ? "P" : "p";
             };
         }
 
