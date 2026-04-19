@@ -17,27 +17,17 @@ public class ToSANConsistencyTest extends MoveValidatorTester {
         int i = 1;
         for (String san : allMoves) {
 
-            MoveValidator.Move moveFromSAN =
-                    validator.fromSAN(chessboard, san, whiteToMove);
-
+            MoveValidator.Move moveFromSAN = validator.fromSAN(chessboard, san, whiteToMove);
             assertNotNull(testName + " move #" + i + " fromSAN failed: " + san, moveFromSAN);
 
-            String regeneratedSAN =
-                    validator.toSAN(chessboard, moveFromSAN, whiteToMove);
+            String regeneratedSAN = validator.toSAN(chessboard, moveFromSAN, whiteToMove);
 
             assertNotNull(testName + " move #" + i + " toSAN returned null", regeneratedSAN);
 
-            MoveValidator.Move roundTrip =
-                    validator.fromSAN(chessboard, regeneratedSAN, whiteToMove);
+            MoveValidator.Move roundTrip = validator.fromSAN(chessboard, regeneratedSAN, whiteToMove);
 
             assertNotNull(testName + " move #" + i + " roundtrip failed: " + regeneratedSAN, roundTrip);
-
-            assertTrue(
-                    testName + " move #" + i + " mismatch SAN roundtrip\n" +
-                            "original: " + san + "\n" +
-                            "generated: " + regeneratedSAN,
-                    legal(san, whiteToMove)
-            );
+            assertTrue(testName + " move #" + i + " mismatch SAN roundtrip\n" + "original: " + san + "\n" + "generated: " + regeneratedSAN, legal(san, whiteToMove));
 
             chessboard.makeMove(moveFromSAN);
 
