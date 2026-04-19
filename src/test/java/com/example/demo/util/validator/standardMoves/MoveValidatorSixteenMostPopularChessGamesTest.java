@@ -313,6 +313,4 @@ public class MoveValidatorSixteenMostPopularChessGamesTest extends MoveValidator
             i++;
         }
     }
-
-
 }
