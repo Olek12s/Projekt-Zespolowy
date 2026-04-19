@@ -14,6 +14,10 @@ public abstract class MoveValidatorTester {
         chessboard = validator.new Chessboard();
     }
 
+    public void reloadChessboard() {
+        chessboard = validator.new Chessboard();
+    }
+
     protected boolean legal(String move, boolean white) {
         return validator.isMoveLegal(chessboard, move, white);
     }
