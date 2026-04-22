@@ -18,13 +18,8 @@
             justify-content: center;
         }
 
-        .white {
-            background-color: lightcyan;
-        }
-
-        .black {
-            background-color: darkslategrey;
-        }
+        .white { background-color: lightcyan; }
+        .black { background-color: darkslategrey; }
 
         img {
             width: 100%;
@@ -40,10 +35,8 @@
         let stompClient = null;
         let gameId = "game-1";
         let selectedPiece = null;
+        let playerId = null;
 
-        // =========================
-        // CONNECTION
-        // =========================
         function connect() {
             const socket = new SockJS('/ws');
             stompClient = Stomp.over(socket);
@@ -52,43 +45,67 @@
                 console.log("Connected");
 
                 stompClient.subscribe('/topic/game/' + gameId, function (msg) {
-                const state = JSON.parse(msg.body);
-                renderBoard(state);
-            });
+                    const state = JSON.parse(msg.body);
+                    renderBoard(state);
+                });
 
-            stompClient.send("/app/join", {}, {});
-        });
+                stompClient.subscribe('/topic/game/' + gameId + '/join', function (msg) {
+    const response = JSON.parse(msg.body);
+
+    console.log("JOIN RESPONSE:", response);
+
+    playerId = response.playerId;
+});
+
+                stompClient.subscribe('/user/queue/game', function (msg) {
+                    const response = JSON.parse(msg.body);
+
+                    console.log("JOIN RESPONSE:", response);
+
+                    playerId = response.playerId;
+                    sessionStorage.setItem("playerId", playerId);
+                });
+
+                stompClient.send("/app/join", {}, {});
+            });
         }
 
-        // =========================
-        // MOVE SEND
-        // =========================
         function sendMove(from, to) {
-            //stompClient.send("/app/move", {}, JSON.stringify({
-            //    gameId: gameId,
-            //    move: from + to
-            //}));
+
+            if (!playerId) {
+                console.warn("playerId not ready yet");
+                return;
+            }
+
             stompClient.send("/app/move", {}, JSON.stringify({
                 gameId: gameId,
                 move: from + to,
-                playerId: sessionStorage.getItem("playerId")
+                playerId: playerId
             }));
         }
 
-        // =========================
-        // DRAG & DROP
-        // =========================
+        function toChessNotation(col, row) {
+            const file = String.fromCharCode(97 + parseInt(col));
+            const rank = 8 - parseInt(row);
+            return file + rank;
+        }
+
         function dragstartHandler(ev) {
+            if (!playerId) return;
             selectedPiece = ev.target;
-            ev.dataTransfer.setData("text", ev.target.parentElement.id);
         }
 
         function dragoverHandler(ev) {
             ev.preventDefault();
         }
 
-       function dropHandler(event) {
+        function dropHandler(event) {
             event.preventDefault();
+
+            if (!playerId) {
+                console.warn("No playerId yet");
+                return;
+            }
 
             const square = event.target.closest(".cell");
             if (!square || !selectedPiece) return;
@@ -100,29 +117,26 @@
             };
 
             sendMove(
-                fromSquare.col + fromSquare.row,
-                toSquareObj.col + toSquareObj.row
+                toChessNotation(fromSquare.col, fromSquare.row),
+                toChessNotation(toSquareObj.col, toSquareObj.row)
             );
 
             selectedPiece = null;
         }
 
-       function toSquare(element) {
+        function toSquare(element) {
             const square = element.closest(".cell");
             if (!square) return null;
 
-             return {
+            return {
                 col: square.dataset.col,
                 row: square.dataset.row
             };
         }
 
-        // =========================
-        // BOARD RENDER
-        // =========================
         function renderBoard(state) {
-            console.log("state of the board:");
-            console.log(state);
+            console.log("state:", state);
+
             const board = state.board;
 
             for (let r = 0; r < 8; r++) {
@@ -135,21 +149,16 @@
                     if (piece) {
                         const img = document.createElement("img");
 
-                        img.onerror = () => {
-                            console.error("IMAGE FAILED:", img.src);
-                        };
                         img.src = getImage(piece);
                         img.draggable = true;
                         img.ondragstart = dragstartHandler;
+
                         cell.appendChild(img);
                     }
                 }
             }
         }
 
-        // =========================
-        // PIECE IMAGES
-        // =========================
         function getImage(piece) {
             switch (piece) {
                 case "wP": return "whitePawn.png";
@@ -168,9 +177,6 @@
             return "";
         }
 
-        // =========================
-        // BOARD CREATION
-        // =========================
         function createBoard() {
             const board = document.getElementById("board");
 

@@ -26,25 +26,6 @@ public class GameWebSocketController
         this.messagingTemplate = messagingTemplate;
     }
 
-    // principal - used to identify currently connected user
-//    @MessageMapping("/move")
-//    public void handleMove(MoveMessage msg, Principal principal) {
-//
-//        GameRoom room = manager.getRoom(msg.getGameId());
-//        if (room == null) return;
-//
-//        boolean success = room.makeMove(principal.getName(), msg.getMove());
-//
-//        if (!success) {
-//            return;
-//            //TODO: error?
-//        }
-//
-//        GameState state = mapper.map(room);
-//
-//        messagingTemplate.convertAndSend("/topic/game/" + msg.getGameId(), state);
-//    }
-
     @MessageMapping("/move")
     public void handleMove(MoveMessage msg) {
         GameRoom room = manager.getRoom(msg.getGameId());
@@ -78,12 +59,11 @@ public class GameWebSocketController
                     "/topic/game/" + room.getGameId(),
                     state
             );
+            String playerId = (principal != null) ? principal.getName() : "player-0";
+            JoinResponse response = new JoinResponse(room.getGameId(), color, playerId);
 
-            JoinResponse response = new JoinResponse(room.getGameId(), color);
-
-            messagingTemplate.convertAndSendToUser(
-                    "player-0",
-                    "/queue/game",
+            messagingTemplate.convertAndSend(
+                    "/topic/game/" + room.getGameId() + "/join",
                     response
             );
         }
@@ -99,12 +79,11 @@ public class GameWebSocketController
                     "/topic/game/" + room.getGameId(),
                     state
             );
+            String playerId = (principal != null) ? principal.getName() : "player-0";
+            JoinResponse response = new JoinResponse(room.getGameId(), color, playerId);
 
-            JoinResponse response = new JoinResponse(room.getGameId(), color);
-
-            messagingTemplate.convertAndSendToUser(
-                    principal.getName(),
-                    "/queue/game",
+            messagingTemplate.convertAndSend(
+                    "/topic/game/" + room.getGameId() + "/join",
                     response
             );
         }

@@ -26,7 +26,7 @@ public class GameRoom
     // LEAVE IT SYNCHRONIZED TO PREVENT RACE CONDITIONS BETWEEN 2 REQUESTS AT THE SAME TIME
     public synchronized boolean makeMove(String playerId, String move) {
         boolean isWhite = playerId.equals(whitePlayerId);
-        if (whiteToMove != isWhite) return false;
+       // if (whiteToMove != isWhite) return false; //TODO: commented, so moves appear on backend, review it asap
         if (!validator.isMoveLegal(board, move, whiteToMove)) return false;
 
         MoveValidator.Move m = validator.parseMove(move);
