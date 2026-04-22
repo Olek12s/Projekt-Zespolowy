@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.JoinResponse;
 import com.example.demo.dto.MoveMessage;
 import com.example.demo.game.GameRoom;
 import com.example.demo.game.GameState;
@@ -26,21 +27,86 @@ public class GameWebSocketController
     }
 
     // principal - used to identify currently connected user
-    @MessageMapping("/move")
-    public void handleMove(MoveMessage msg, Principal principal) {
+//    @MessageMapping("/move")
+//    public void handleMove(MoveMessage msg, Principal principal) {
+//
+//        GameRoom room = manager.getRoom(msg.getGameId());
+//        if (room == null) return;
+//
+//        boolean success = room.makeMove(principal.getName(), msg.getMove());
+//
+//        if (!success) {
+//            return;
+//            //TODO: error?
+//        }
+//
+//        GameState state = mapper.map(room);
+//
+//        messagingTemplate.convertAndSend("/topic/game/" + msg.getGameId(), state);
+//    }
 
+    @MessageMapping("/move")
+    public void handleMove(MoveMessage msg) {
         GameRoom room = manager.getRoom(msg.getGameId());
         if (room == null) return;
 
-        boolean success = room.makeMove(principal.getName(), msg.getMove());
+        boolean success = room.makeMove(msg.getPlayerId(), msg.getMove());
 
-        if (!success) {
-            return;
-            //TODO: error?
-        }
+        if (!success) return;
 
         GameState state = mapper.map(room);
-
         messagingTemplate.convertAndSend("/topic/game/" + msg.getGameId(), state);
+    }
+
+    @MessageMapping("/join")
+    public void join(Principal principal) {
+
+        GameRoom room = manager.findOrCreateRoom();
+
+
+        //TODO: temp
+        String color;
+        if (principal == null) {
+            color = room.assignColor("player-0");
+            System.out.println("GameWebSocketController - join");
+            System.out.println("JOIN CALLED by " + "player-0");
+            System.out.println("ROOM ID: " + room.getGameId());
+
+            GameState state = mapper.map(room);
+
+            messagingTemplate.convertAndSend(
+                    "/topic/game/" + room.getGameId(),
+                    state
+            );
+
+            JoinResponse response = new JoinResponse(room.getGameId(), color);
+
+            messagingTemplate.convertAndSendToUser(
+                    "player-0",
+                    "/queue/game",
+                    response
+            );
+        }
+        else {
+            color = room.assignColor(principal.getName());
+            System.out.println("GameWebSocketController - join");
+            System.out.println("JOIN CALLED by " + principal.getName());
+            System.out.println("ROOM ID: " + room.getGameId());
+
+            GameState state = mapper.map(room);
+
+            messagingTemplate.convertAndSend(
+                    "/topic/game/" + room.getGameId(),
+                    state
+            );
+
+            JoinResponse response = new JoinResponse(room.getGameId(), color);
+
+            messagingTemplate.convertAndSendToUser(
+                    principal.getName(),
+                    "/queue/game",
+                    response
+            );
+        }
     }
 }

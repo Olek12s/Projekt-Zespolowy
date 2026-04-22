@@ -1,7 +1,9 @@
 package com.example.demo.game;
 
 import com.example.demo.util.MoveValidator;
+import org.springframework.stereotype.Component;
 
+@Component
 public class GameStateMapper
 {
     // Maps GameRoom to GameState DTO for client (WebSocket response)

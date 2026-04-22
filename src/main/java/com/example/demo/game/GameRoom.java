@@ -2,23 +2,25 @@ package com.example.demo.game;
 
 import com.example.demo.util.MoveValidator;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class GameRoom
 {
     private final String gameId;
-    private final String whitePlayerId;
-    private final String blackPlayerId;
+    private String whitePlayerId;
+    private String blackPlayerId;
+    private final Set<String> observers = new HashSet<>();
 
     private final MoveValidator validator = new MoveValidator();
-    private final MoveValidator.Chessboard board;
+    private final MoveValidator.Chessboard board = validator.new Chessboard();
 
     private boolean whiteToMove = true;
     private String lastMove;
 
-    public GameRoom(String gameId, String whitePlayerId, String blackPlayerId) {
+    public GameRoom(String gameId) {
         this.gameId = gameId;
-        this.whitePlayerId = whitePlayerId;
-        this.blackPlayerId = blackPlayerId;
-        this.board = validator.new Chessboard();
+        System.out.println("GAME ROOM INIT");
     }
 
     // LEAVE IT SYNCHRONIZED TO PREVENT RACE CONDITIONS BETWEEN 2 REQUESTS AT THE SAME TIME
@@ -38,6 +40,10 @@ public class GameRoom
         return true;
     }
 
+    public boolean hasFreeSlot() {
+        return whitePlayerId == null || blackPlayerId == null;
+    }
+
     public String getGameId() {return gameId;}
     public String getWhitePlayerId() {return whitePlayerId;}
     public String getBlackPlayerId() {return blackPlayerId;}
@@ -47,4 +53,17 @@ public class GameRoom
     public void setWhiteToMove(boolean whiteToMove) {this.whiteToMove = whiteToMove;}
     public String getLastMove() {return lastMove;}
     public void setLastMove(String lastMove) {this.lastMove = lastMove;}
+
+    public String assignColor(String playerId) {
+        if (whitePlayerId == null) {
+            whitePlayerId = playerId;
+            return "WHITE";
+        }
+        if (blackPlayerId == null) {
+            blackPlayerId = playerId;
+            return "BLACK";
+        }
+        observers.add(playerId);
+        return "OBSERVER";
+    }
 }

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .board {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
+            margin: 40px auto;
+            width: fit-content;
+        }
+
+        .cell {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .white {
+            background-color: lightcyan;
+        }
+
+        .black {
+            background-color: darkslategrey;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+    <script>
+        let stompClient = null;
+        let gameId = "game-1";
+        let selectedPiece = null;
+
+        // =========================
+        // CONNECTION
+        // =========================
+        function connect() {
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, function () {
+                console.log("Connected");
+
+                stompClient.subscribe('/topic/game/' + gameId, function (msg) {
+                const state = JSON.parse(msg.body);
+                renderBoard(state);
+            });
+
+            stompClient.send("/app/join", {}, {});
+        });
+        }
+
+        // =========================
+        // MOVE SEND
+        // =========================
+        function sendMove(from, to) {
+            //stompClient.send("/app/move", {}, JSON.stringify({
+            //    gameId: gameId,
+            //    move: from + to
+            //}));
+            stompClient.send("/app/move", {}, JSON.stringify({
+                gameId: gameId,
+                move: from + to,
+                playerId: sessionStorage.getItem("playerId")
+            }));
+        }
+
+        // =========================
+        // DRAG & DROP
+        // =========================
+        function dragstartHandler(ev) {
+            selectedPiece = ev.target;
+            ev.dataTransfer.setData("text", ev.target.parentElement.id);
+        }
+
+        function dragoverHandler(ev) {
+            ev.preventDefault();
+        }
+
+       function dropHandler(event) {
+            event.preventDefault();
+
+            const square = event.target.closest(".cell");
+            if (!square || !selectedPiece) return;
+
+            const fromSquare = toSquare(selectedPiece);
+            const toSquareObj = {
+                col: square.dataset.col,
+                row: square.dataset.row
+            };
+
+            sendMove(
+                fromSquare.col + fromSquare.row,
+                toSquareObj.col + toSquareObj.row
+            );
+
+            selectedPiece = null;
+        }
+
+       function toSquare(element) {
+            const square = element.closest(".cell");
+            if (!square) return null;
+
+             return {
+                col: square.dataset.col,
+                row: square.dataset.row
+            };
+        }
+
+        // =========================
+        // BOARD RENDER
+        // =========================
+        function renderBoard(state) {
+            console.log("state of the board:");
+            console.log(state);
+            const board = state.board;
+
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+
+                    const cell = document.getElementById(`cell-${r}-${c}`);
+                    cell.innerHTML = "";
+
+                    const piece = board[r][c];
+                    if (piece) {
+                        const img = document.createElement("img");
+
+                        img.onerror = () => {
+                            console.error("IMAGE FAILED:", img.src);
+                        };
+                        img.src = getImage(piece);
+                        img.draggable = true;
+                        img.ondragstart = dragstartHandler;
+                        cell.appendChild(img);
+                    }
+                }
+            }
+        }
+
+        // =========================
+        // PIECE IMAGES
+        // =========================
+        function getImage(piece) {
+            switch (piece) {
+                case "wP": return "whitePawn.png";
+                case "bP": return "blackPawn.png";
+                case "wR": return "whiteRook.png";
+                case "bR": return "blackRook.png";
+                case "wN": return "whiteKnight.png";
+                case "bN": return "blackKnight.png";
+                case "wB": return "whiteBishop.png";
+                case "bB": return "blackBishop.png";
+                case "wQ": return "whiteQueen.png";
+                case "bQ": return "blackQueen.png";
+                case "wK": return "whiteKing.png";
+                case "bK": return "blackKing.png";
+            }
+            return "";
+        }
+
+        // =========================
+        // BOARD CREATION
+        // =========================
+        function createBoard() {
+            const board = document.getElementById("board");
+
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+
+                    const cell = document.createElement("div");
+                    cell.classList.add("cell");
+
+                    if ((r + c) % 2 === 0) {
+                        cell.classList.add("white");
+                    } else {
+                        cell.classList.add("black");
+                    }
+
+                    cell.id = `cell-${r}-${c}`;
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+
+                    cell.ondrop = dropHandler;
+                    cell.ondragover = dragoverHandler;
+
+                    board.appendChild(cell);
+                }
+            }
+        }
+
+        window.onload = function () {
+            createBoard();
+            connect();
+        };
+    </script>
+</head>
+
+<body style="background-color: aquamarine;">
+<div id="board" class="board"></div>
+</body>
+</html>

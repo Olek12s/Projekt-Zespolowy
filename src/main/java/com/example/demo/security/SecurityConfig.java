@@ -68,33 +68,35 @@ public class SecurityConfig
 
                 .authorizeHttpRequests(auth -> auth
 
-                        //SWAGGER
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                                .anyRequest().permitAll()
 
-
-                        // WEB SOCKET
-                        .requestMatchers("/ws/**").permitAll()
-
-                        // PUBLIC
-                        .requestMatchers("/api/auth/login", "/api/users/register").permitAll()
-
-                        // GAMES - READ (USER + ADMIN)
-                        .requestMatchers(HttpMethod.GET, "/api/games/**").hasAnyRole("USER", "ADMIN")
-
-                        //// GAME RESULTS - READ (USER + ADMIN)
-                        .requestMatchers(HttpMethod.GET, "/api/game-results/**").hasAnyRole("USER", "ADMIN")
-
-                        // ADMIN ONLY - WRITE
-                        .requestMatchers(HttpMethod.POST, "/api/games").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/games/**").hasRole("ADMIN")
-
-                        .requestMatchers(HttpMethod.POST, "/api/game-results").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/game-results/**").hasRole("ADMIN")
-
-                        .requestMatchers("/api/game-terminations/**").hasRole("ADMIN")
-
-                        // REST
-                        .anyRequest().authenticated()
+//                        //SWAGGER
+//                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+//
+//
+//                        // WEB SOCKET
+//                        .requestMatchers("/ws/**").permitAll()
+//
+//                        // PUBLIC
+//                        .requestMatchers("/api/auth/login", "/api/users/register").permitAll()
+//
+//                        // GAMES - READ (USER + ADMIN)
+//                        .requestMatchers(HttpMethod.GET, "/api/games/**").hasAnyRole("USER", "ADMIN")
+//
+//                        //// GAME RESULTS - READ (USER + ADMIN)
+//                        .requestMatchers(HttpMethod.GET, "/api/game-results/**").hasAnyRole("USER", "ADMIN")
+//
+//                        // ADMIN ONLY - WRITE
+//                        .requestMatchers(HttpMethod.POST, "/api/games").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.DELETE, "/api/games/**").hasRole("ADMIN")
+//
+//                        .requestMatchers(HttpMethod.POST, "/api/game-results").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.DELETE, "/api/game-results/**").hasRole("ADMIN")
+//
+//                        .requestMatchers("/api/game-terminations/**").hasRole("ADMIN")
+//
+//                        // REST
+//                        .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

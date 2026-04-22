@@ -5,10 +5,14 @@ public class MoveMessage
 {
     private String gameId;
     private String move;    // Standard Algebraic Notation (SAN) format
+    private String playerId;
 
     public String getGameId() { return gameId; }
     public void setGameId(String gameId) { this.gameId = gameId; }
 
     public String getMove() { return move; }
     public void setMove(String move) { this.move = move; }
+
+    public String getPlayerId() { return playerId; }
+    public void setPlayerId(String playerId) { this.playerId = playerId; }
 }
