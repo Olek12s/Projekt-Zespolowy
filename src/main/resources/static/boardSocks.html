@@ -34,8 +34,10 @@
     <script>
         let stompClient = null;
         let gameId = "game-1";
+
         let selectedPiece = null;
         let playerId = null;
+        let isReady = false;
 
         function connect() {
             const socket = new SockJS('/ws');
@@ -44,18 +46,6 @@
             stompClient.connect({}, function () {
                 console.log("Connected");
 
-                stompClient.subscribe('/topic/game/' + gameId, function (msg) {
-                    const state = JSON.parse(msg.body);
-                    renderBoard(state);
-                });
-
-                stompClient.subscribe('/topic/game/' + gameId + '/join', function (msg) {
-    const response = JSON.parse(msg.body);
-
-    console.log("JOIN RESPONSE:", response);
-
-    playerId = response.playerId;
-});
 
                 stompClient.subscribe('/user/queue/game', function (msg) {
                     const response = JSON.parse(msg.body);
@@ -64,7 +54,17 @@
 
                     playerId = response.playerId;
                     sessionStorage.setItem("playerId", playerId);
+                    isReady = true;
+
+                    console.log("READY:", isReady, "PLAYER:", playerId);
                 });
+
+
+                stompClient.subscribe('/topic/game/' + gameId, function (msg) {
+                    const state = JSON.parse(msg.body);
+                    renderBoard(state);
+                });
+
 
                 stompClient.send("/app/join", {}, {});
             });
@@ -73,7 +73,7 @@
         function sendMove(from, to) {
 
             if (!playerId) {
-                console.warn("playerId not ready yet");
+                console.warn("No playerId yet");
                 return;
             }
 
@@ -135,8 +135,6 @@
         }
 
         function renderBoard(state) {
-            console.log("state:", state);
-
             const board = state.board;
 
             for (let r = 0; r < 8; r++) {

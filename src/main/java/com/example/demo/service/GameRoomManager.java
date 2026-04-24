@@ -31,15 +31,18 @@ public class GameRoomManager
 
     public synchronized GameRoom findOrCreateRoom() {
 
-        return rooms.values().stream()
-                .filter(GameRoom::hasFreeSlot)
-                .findFirst()
-                .orElseGet(() -> {
-                    //String id = UUID.randomUUID().toString();
-                    String id = "game-1";   // TODO: temporary debug solution
-                    GameRoom room = new GameRoom(id);
-                    rooms.put(id, room);
-                    return room;
-                });
+//        return rooms.values().stream()
+//                .filter(GameRoom::hasFreeSlot)
+//                .findFirst()
+//                .orElseGet(() -> {
+//                    //String id = UUID.randomUUID().toString();
+//                    GameRoom room = new GameRoom(id);
+//                    rooms.put(id, room);
+//                    return room;
+//                });
+
+
+        // TODO: temporary debug solution. Only one instance of GameRoom exists on the server
+        return rooms.computeIfAbsent("game-1", GameRoom::new);
     }
 }

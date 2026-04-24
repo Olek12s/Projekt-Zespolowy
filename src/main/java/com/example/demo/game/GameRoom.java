@@ -20,14 +20,14 @@ public class GameRoom
 
     public GameRoom(String gameId) {
         this.gameId = gameId;
-        System.out.println("GAME ROOM INIT");
+        System.out.println("Game Room Initialized with ID: " + gameId);
     }
 
     // LEAVE IT SYNCHRONIZED TO PREVENT RACE CONDITIONS BETWEEN 2 REQUESTS AT THE SAME TIME
     public synchronized boolean makeMove(String playerId, String move) {
         boolean isWhite = playerId.equals(whitePlayerId);
-       // if (whiteToMove != isWhite) return false; //TODO: commented, so moves appear on backend, review it asap
-        if (!validator.isMoveLegal(board, move, whiteToMove)) return false;
+        if (whiteToMove != isWhite) return false;
+        if (!validator.isMoveLegalUCI(board, move, whiteToMove)) return false;
 
         MoveValidator.Move m = validator.parseMove(move);
         if (m == null) return false;
@@ -36,7 +36,7 @@ public class GameRoom
         lastMove = move;
 
         whiteToMove = !whiteToMove; // swap move turn
-
+        System.out.println("MOVE by " + playerId);
         return true;
     }
 
@@ -57,13 +57,16 @@ public class GameRoom
     public String assignColor(String playerId) {
         if (whitePlayerId == null) {
             whitePlayerId = playerId;
+            System.out.println("Assigned white");
             return "WHITE";
         }
         if (blackPlayerId == null) {
             blackPlayerId = playerId;
+            System.out.println("Assigned black");
             return "BLACK";
         }
         observers.add(playerId);
+        System.out.println("Assigned observer");
         return "OBSERVER";
     }
 }

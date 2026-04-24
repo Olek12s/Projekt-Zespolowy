@@ -163,20 +163,18 @@ public class MoveValidator {
         return isMoveLegalInternal(chessboard, m, whiteToMove);
     }
 
-    //TODO: check this one for frontend<->backend comms why this one works, and above one does not
-//    public boolean isMoveLegal(Chessboard chessboard, String move, boolean whiteToMove) {
-//        Move m = parseMove(move);
-//
-//        if (m == null) return false;
-//
-//        Piece p = chessboard.getPiece(m.from().col(), m.from().row());
-//        if (p == null) return false;
-//
-//        if (whiteToMove && p.color() != PieceColor.WHITE) return false;
-//        if (!whiteToMove && p.color() != PieceColor.BLACK) return false;
-//
-//        return isMoveLegalInternal(chessboard, m, whiteToMove);
-//    }
+    public boolean isMoveLegalUCI(Chessboard chessboard, String moveUCI, boolean whiteToMove) {
+        Move m = parseMove(moveUCI);
+        if (m == null) return false;
+
+        Piece p = chessboard.getPiece(m.from().col(), m.from().row());
+        if (p == null) return false;
+
+        if (whiteToMove && p.color() != PieceColor.WHITE) return false;
+        if (!whiteToMove && p.color() != PieceColor.BLACK) return false;
+
+        return isMoveLegalInternal(chessboard, m, whiteToMove);
+    }
 
     //dla uci
     public Move parseMove(String move) {

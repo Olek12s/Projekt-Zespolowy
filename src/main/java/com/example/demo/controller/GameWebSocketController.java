@@ -13,8 +13,7 @@ import org.springframework.stereotype.Controller;
 import java.security.Principal;
 
 @Controller // controller handles HTTP requests
-public class GameWebSocketController
-{
+public class GameWebSocketController {
     private final GameRoomManager manager;
     private final GameStateMapper mapper;
     private final SimpMessagingTemplate messagingTemplate;  // Spring messaging class used to send messages to WebSocket-connected clients
@@ -44,48 +43,24 @@ public class GameWebSocketController
 
         GameRoom room = manager.findOrCreateRoom();
 
+        String playerId = principal.getName();
+        String color = room.assignColor(playerId);
+        GameState state = mapper.map(room);
 
-        //TODO: temp
-        String color;
-        if (principal == null) {
-            color = room.assignColor("player-0");
-            System.out.println("GameWebSocketController - join");
-            System.out.println("JOIN CALLED by " + "player-0");
-            System.out.println("ROOM ID: " + room.getGameId());
+        System.out.println("join");
 
-            GameState state = mapper.map(room);
 
-            messagingTemplate.convertAndSend(
-                    "/topic/game/" + room.getGameId(),
-                    state
-            );
-            String playerId = (principal != null) ? principal.getName() : "player-0";
-            JoinResponse response = new JoinResponse(room.getGameId(), color, playerId);
+        messagingTemplate.convertAndSend(
+                "/topic/game/" + room.getGameId(),
+                state
+        );
 
-            messagingTemplate.convertAndSend(
-                    "/topic/game/" + room.getGameId() + "/join",
-                    response
-            );
-        }
-        else {
-            color = room.assignColor(principal.getName());
-            System.out.println("GameWebSocketController - join");
-            System.out.println("JOIN CALLED by " + principal.getName());
-            System.out.println("ROOM ID: " + room.getGameId());
+        JoinResponse response = new JoinResponse(room.getGameId(), color, playerId);
 
-            GameState state = mapper.map(room);
-
-            messagingTemplate.convertAndSend(
-                    "/topic/game/" + room.getGameId(),
-                    state
-            );
-            String playerId = (principal != null) ? principal.getName() : "player-0";
-            JoinResponse response = new JoinResponse(room.getGameId(), color, playerId);
-
-            messagingTemplate.convertAndSend(
-                    "/topic/game/" + room.getGameId() + "/join",
-                    response
-            );
-        }
+        messagingTemplate.convertAndSendToUser(
+                playerId,
+                "/queue/game",
+                response
+        );
     }
 }
