@@ -14,6 +14,7 @@ public class GameRoomManager
 {
     // concurrentHashMap for thread-safe access and multi-threading
     private final Map<String, GameRoom> rooms = new ConcurrentHashMap<>();
+    private final Map<String, String> playerToRoom = new ConcurrentHashMap<>();
 
     public GameRoom getRoom(String gameId) {
         return rooms.get(gameId);
@@ -28,21 +29,15 @@ public class GameRoomManager
     public void removeRoom(String gameId) {
         rooms.remove(gameId);
     }
+    public void removePlayer(String username) { playerToRoom.remove(username); }
 
-    public synchronized GameRoom findOrCreateRoom() {
-
-//        return rooms.values().stream()
-//                .filter(GameRoom::hasFreeSlot)
-//                .findFirst()
-//                .orElseGet(() -> {
-//                    //String id = UUID.randomUUID().toString();
-//                    GameRoom room = new GameRoom(id);
-//                    rooms.put(id, room);
-//                    return room;
-//                });
-
-
-        // TODO: temporary debug solution. Only one instance of GameRoom exists on the server
-        return rooms.computeIfAbsent("game-1", GameRoom::new);
+    public synchronized GameRoom createRoomForTwo(String username1, String username2) {
+        String gameId = UUID.randomUUID().toString();
+        GameRoom room = createRoom(gameId);
+        room.assignColor(username1);
+        room.assignColor(username2);
+        playerToRoom.put(username1, gameId);
+        playerToRoom.put(username2, gameId);
+        return room;
     }
 }
