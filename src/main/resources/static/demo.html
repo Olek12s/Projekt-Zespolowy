@@ -57,6 +57,10 @@
                         console.log(json);
                         localStorage.setItem("token", json.token);
                         document.getElementById("demo").innerHTML = json.message
+                        if(json.token != null)
+                        {
+                            window.location = "mainpage.html"
+                        }
                     });
             }
         </script>
