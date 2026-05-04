@@ -5,24 +5,32 @@ import com.example.demo.dto.MoveMessage;
 import com.example.demo.game.GameRoom;
 import com.example.demo.game.GameState;
 import com.example.demo.game.GameStateMapper;
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.GameRoomManager;
+import com.example.demo.service.MatchmakingQueue;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @Controller // controller handles HTTP requests
 public class GameWebSocketController {
     private final GameRoomManager manager;
     private final GameStateMapper mapper;
     private final SimpMessagingTemplate messagingTemplate;  // Spring messaging class used to send messages to WebSocket-connected clients
+    private final MatchmakingQueue matchmakingQueue;
+    private final UserRepository userRepository;
 
 
-    public GameWebSocketController(GameRoomManager manager, GameStateMapper mapper, SimpMessagingTemplate messagingTemplate) {
+    public GameWebSocketController(GameRoomManager manager, GameStateMapper mapper, SimpMessagingTemplate messagingTemplate, MatchmakingQueue matchmakingQueue, UserRepository userRepository) {
         this.manager = manager;
         this.mapper = mapper;
         this.messagingTemplate = messagingTemplate;
+        this.matchmakingQueue = matchmakingQueue;
+        this.userRepository = userRepository;
     }
 
     @MessageMapping("/move")
@@ -40,27 +48,38 @@ public class GameWebSocketController {
 
     @MessageMapping("/join")
     public void join(Principal principal) {
+        String username = principal.getName();
 
-        GameRoom room = manager.findOrCreateRoom();
+        if (matchmakingQueue.isInQueue(username)) return;
 
-        String playerId = principal.getName();
-        String color = room.assignColor(playerId);
-        GameState state = mapper.map(room);
+        User user = userRepository.findByLogin(username).orElse(null);
+        if (user == null) return;
 
-        System.out.println("join");
+        double elo = user.getElo();
+        Optional<MatchmakingQueue.QueueEntry> opponent = matchmakingQueue.findMatch(elo);
 
+        if (opponent.isPresent()) {
+            matchmakingQueue.remove(opponent.get().username());
+            GameRoom room = manager.createRoomForTwo(username, opponent.get().username());
+            GameState state = mapper.map(room);
+            String gameId = room.getGameId();
 
-        messagingTemplate.convertAndSend(
-                "/topic/game/" + room.getGameId(),
-                state
-        );
+            messagingTemplate.convertAndSendToUser(
+                    username, "/queue/game",
+                    new JoinResponse(gameId, room.getWhitePlayerId().equals(username) ? "WHITE" : "BLACK", username)
+            );
+            messagingTemplate.convertAndSendToUser(
+                    opponent.get().username(), "/queue/game",
+                    new JoinResponse(gameId, room.getWhitePlayerId().equals(opponent.get().username()) ? "WHITE" : "BLACK", opponent.get().username())
+            );
+            messagingTemplate.convertAndSend("/topic/game/" + gameId, state);
 
-        JoinResponse response = new JoinResponse(room.getGameId(), color, playerId);
-
-        messagingTemplate.convertAndSendToUser(
-                playerId,
-                "/queue/game",
-                response
-        );
+        } else {
+            matchmakingQueue.add(new MatchmakingQueue.QueueEntry(username, elo, System.currentTimeMillis()));
+            messagingTemplate.convertAndSendToUser(
+                    username, "/queue/game",
+                    new JoinResponse(null, "WAITING", username)
+            );
+        }
     }
 }
