@@ -52,7 +52,12 @@
                     }
                 })
                     .then((response) => response.json())
-                    .then((json) => {console.log(json); JSON.parse(json)});
+                    .then((json) =>
+                    {
+                        console.log(json);
+                        localStorage.setItem("token", json.token);
+                        document.getElementById("demo").innerHTML = json.message
+                    });
             }
         </script>
     </body>
