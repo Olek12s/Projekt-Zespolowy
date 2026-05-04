@@ -1,5 +1,6 @@
 package com.example.demo.sock;
 
+import com.example.demo.security.JwtUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.messaging.Message;
@@ -23,6 +24,11 @@ import java.util.UUID;
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    private final JwtUtil jwtUtil;
+
+    public WebSocketConfig(JwtUtil jwtUtil) { this.jwtUtil = jwtUtil; }
+
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic", "/queue");
@@ -41,9 +47,22 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                             WebSocketHandler wsHandler,
                             Map<String, Object> attributes) {
 
+                        String query = request.getURI().getQuery();
+                        if (query != null) {
+                            for (String param : query.split("&")) {
+                                if (param.startsWith("token=")) {
+                                    String token = param.substring(6);
+                                    try {
+                                        String username = jwtUtil.extractUsername(token);
+                                        if (username != null) return () -> username;
+                                    } catch (Exception e) {
+                                        System.err.println("Invalid WebSocket token");
+                                    }
+                                }
+                            }
+                        }
                         return () -> UUID.randomUUID().toString();
                     }
-                })
-                .withSockJS();
+                }).withSockJS();
     }
 }
