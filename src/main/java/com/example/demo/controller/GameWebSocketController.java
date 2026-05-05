@@ -34,11 +34,14 @@ public class GameWebSocketController {
     }
 
     @MessageMapping("/move")
-    public void handleMove(MoveMessage msg) {
+    public void handleMove(MoveMessage msg, Principal principal) {
+        String username = principal.getName();
+
         GameRoom room = manager.getRoom(msg.getGameId());
         if (room == null) return;
 
-        boolean success = room.makeMove(msg.getPlayerId(), msg.getMove());
+        //boolean success = room.makeMove(msg.getPlayerId(), msg.getMove());
+        boolean success = room.makeMove(username, msg.getMove());
 
         if (!success) return;
 
@@ -81,5 +84,24 @@ public class GameWebSocketController {
                     new JoinResponse(null, "WAITING", username)
             );
         }
+    }
+
+    @MessageMapping("/state")
+    public void getState(Principal principal) {
+        String username = principal.getName();
+
+        String gameId = manager.getRoomIdForPlayer(username);
+        if (gameId == null) return;
+
+        GameRoom room = manager.getRoom(gameId);
+        if (room == null) return;
+
+        GameState state = mapper.map(room);
+
+        messagingTemplate.convertAndSendToUser(
+                username,
+                "/queue/state",
+                state
+        );
     }
 }

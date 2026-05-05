@@ -40,4 +40,8 @@ public class GameRoomManager
         playerToRoom.put(username2, gameId);
         return room;
     }
+
+    public String getRoomIdForPlayer(String username) {
+        return playerToRoom.get(username);
+    }
 }
