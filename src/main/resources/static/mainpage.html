@@ -4,52 +4,11 @@
         <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
         <script src="mainpage.js"></script>
-        <style>
-            body
-            {
-                background-image: url("demoBackgroundImage2.png");
-            }
-            .topbarButton{
-                background-color: gray;
-                border: none;
-                color: white;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 32px;
-                font-weight: bold;
-                margin: 4px 2px;
-                cursor: pointer;
-            }
-            .mainMenuButton{
-                background-color: lightseagreen;
-                border: none;
-                color: white;
-                padding: 15px 32px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 32px;
-                font-weight: bold;
-                margin: 4px 2px;
-                cursor: pointer;
-            }
-            .top{
-                display: flex;
-                justify-content: right;
-                align-items: center;
-                background-color: gray;
-            }
-            .center {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-        </style>
+        <link rel="stylesheet", href = "mainpage.css"> 
     </head>
-    <body style="margin: 0; padding: 0;">
-        <div class="top" style="margin-bottom: 5%">
-            <img src="profilepic.jpg" style="height:64px;">
+    <body>
+        <div class="top">
+            <img src="profilepic.jpg" class="profileImage">
             <button class="topbarButton" onclick="myAccountButtonClicked()">My Account</button>
         </div>
         <div class="center">
