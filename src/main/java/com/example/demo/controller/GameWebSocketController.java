@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ChatMessage;
 import com.example.demo.dto.JoinResponse;
 import com.example.demo.dto.MoveMessage;
 import com.example.demo.game.GameRoom;
@@ -103,5 +104,11 @@ public class GameWebSocketController {
                 "/queue/state",
                 state
         );
+    }
+
+    @MessageMapping("/chat")
+    public void handleChat(ChatMessage msg, Principal principal) {
+        msg.setSender(principal.getName());
+        messagingTemplate.convertAndSend("/topic/game/" + msg.getGameId() + "/chat", msg);
     }
 }
