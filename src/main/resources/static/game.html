@@ -34,6 +34,37 @@
             height: 100%;
             cursor: grab;
         }
+
+        .chat-bubble {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            z-index: 1000;
+        }
+
+        .chat-panel {
+            display: none;
+        }
+
+        .chat-messages {
+            height: 200px;
+            width: 280px;
+            overflow-y: auto;
+            border: 1px solid gray;
+            background: white;
+            padding: 5px;
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .chat-input-row input {
+            flex: 1;
+        }
+
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
@@ -45,6 +76,18 @@
 
 <div id="board" class="board"></div>
 
+<div class="chat-bubble">
+    <button class="chat-toggle-btn" onclick="toggleChat()">Czat ▲</button>
+    <div id="chatPanel" class="chat-panel">
+        <div id="chat-messages" class="chat-messages"></div>
+        <div class="chat-input-row">
+            <input id="chat-input" type="text" />
+            <button onclick="sendChat()">Wyślij</button>
+        </div>
+    </div>
+</div>
+</div>
+
 <script>
     let stompClient = null;
 
@@ -53,6 +96,8 @@
 
     let playerId = null;
     let selectedPiece = null;
+
+    let chatOpen = false;
 
     function connect() {
         const socket = new SockJS(`http://localhost:8089/ws?token=${token}`);   // ????????????????????????????????????????? safe ??????????????????????????????
@@ -72,8 +117,19 @@
                 renderBoard(state);
             });
 
+            stompClient.subscribe('/topic/game/' + gameId + '/chat', function (msg) {
+                const chat = JSON.parse(msg.body);
+                const div = document.createElement('div');
+                div.className = 'chat-msg';
+                div.innerHTML = `<b>${chat.sender}:</b> ${chat.content}`;
+                const msgs = document.getElementById('chat-messages');
+                msgs.appendChild(div);
+                msgs.scrollTop = msgs.scrollHeight;
+            });
+
             stompClient.send("/app/state", {}, {});
         });
+
     }
 
     function sendMove(from, to) {
@@ -192,6 +248,28 @@
             }
         }
     }
+
+    function sendChat() {
+        const input = document.getElementById('chat-input');
+        const content = input.value.trim();
+        if (!content) return;
+        stompClient.send("/app/chat", {}, JSON.stringify({
+            gameId: gameId,
+            content: content
+        }));
+        input.value = "";
+    }
+
+    function toggleChat() {
+        const panel = document.getElementById('chatPanel');
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('chat-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') sendChat();
+        });
+    });
 
     window.onload = function () {
         if (!gameId) {
