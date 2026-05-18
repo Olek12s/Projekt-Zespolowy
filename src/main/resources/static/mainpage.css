@@ -1,0 +1,56 @@
+body
+{
+    background-image: url("demoBackgroundImage2.png");
+    margin: 0;
+    padding: 0;
+}
+
+.topbarButton
+{
+    background-color: gray;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 32px;
+    font-weight: bold;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+.mainMenuButton
+{
+    background-color: lightseagreen;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 32px;
+    font-weight: bold;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+.top
+{
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    background-color: gray;
+    margin-bottom: 5%
+}
+            
+.center 
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profileImage
+{
+    height:64px;
+}
