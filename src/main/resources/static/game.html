@@ -91,8 +91,8 @@
 <script>
     let stompClient = null;
 
-    let gameId = localStorage.getItem("gameId");
-    let token = localStorage.getItem("token");
+    let gameId = sessionStorage.getItem("gameId");
+    let token = sessionStorage.getItem("token");
 
     let playerId = null;
     let selectedPiece = null;
