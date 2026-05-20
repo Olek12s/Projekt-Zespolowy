@@ -4,52 +4,11 @@
         <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
         <script src="mainpage.js"></script>
-        <style>
-            body
-            {
-                background-image: url("demoBackgroundImage2.png");
-            }
-            .topbarButton{
-                background-color: gray;
-                border: none;
-                color: white;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 32px;
-                font-weight: bold;
-                margin: 4px 2px;
-                cursor: pointer;
-            }
-            .mainMenuButton{
-                background-color: lightseagreen;
-                border: none;
-                color: white;
-                padding: 15px 32px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 32px;
-                font-weight: bold;
-                margin: 4px 2px;
-                cursor: pointer;
-            }
-            .top{
-                display: flex;
-                justify-content: right;
-                align-items: center;
-                background-color: gray;
-            }
-            .center {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-        </style>
+        <link rel="stylesheet" href = "mainpage.css">
     </head>
-    <body style="margin: 0; padding: 0;">
-        <div class="top" style="margin-bottom: 5%">
-            <img src="profilepic.jpg" style="height:64px;">
+    <body>
+        <div class="top">
+            <img src="profilepic.jpg" class="profileImage">
             <button class="topbarButton" onclick="myAccountButtonClicked()">My Account</button>
         </div>
         <div class="center">
@@ -70,47 +29,5 @@
         <div class="center">            
             <button class="mainMenuButton" onclick="friendsButtonClicked()">Friends</button>
         </div>
-
-    <script>
-        let client = null;
-
-        function connectWebSocket() {
-        const token = localStorage.getItem("token");
-
-        const socket = new SockJS(`http://localhost:8089/ws?token=${token}`);
-        client = Stomp.over(socket);
-
-        client.connect({}, () => {
-            console.log("Połączono z WebSocket");
-
-            client.subscribe("/user/queue/game", (msg) => {
-                const data = JSON.parse(msg.body);
-                console.log("MATCH RESPONSE:", data);
-
-                if (data.color === "WAITING") {
-                    alert("Szukamy przeciwnika...");
-                } else {
-                    alert("Znaleziono gre! ID: " + data.gameId + " kolor: " + data.color);
-
-                    localStorage.setItem("gameId", data.gameId);
-                    window.location = "game.html";
-                }
-            });
-        });
-        }
-
-        function playButtonClicked() {
-        if (!client) {
-            connectWebSocket();
-
-            setTimeout(() => {
-                client.send("/app/join", {}, {});
-            }, 500);
-        } else {
-            client.send("/app/join", {}, {});
-            }
-        }
-    </script>
-
     </body>
 </html>

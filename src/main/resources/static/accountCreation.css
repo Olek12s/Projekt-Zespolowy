@@ -1,0 +1,14 @@
+body
+{
+    background-image: url("demoBackgroundImage2.png");
+}
+
+.messageIncorrect
+{
+    color: red;
+}
+
+.messageCorrect
+{
+    color: lawngreen;
+}
