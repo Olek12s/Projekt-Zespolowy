@@ -2,7 +2,7 @@ let client = null;
 
 function connectWebSocket() 
 {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
 
     const socket = new SockJS(`http://localhost:8089/ws?token=${token}`);
     client = Stomp.over(socket);
@@ -24,7 +24,7 @@ function connectWebSocket()
             {
                 alert("Znaleziono gre! ID: " + data.gameId + " kolor: " + data.color);
 
-                localStorage.setItem("gameId", data.gameId);
+                sessionStorage.setItem("gameId", data.gameId);
                 window.location = "game.html";
             }
         });

@@ -20,7 +20,7 @@ function signIn()
     .then((json) =>
     {
         console.log(json);
-        localStorage.setItem("token", json.token);
+        sessionStorage.setItem("token", json.token);
         document.getElementById("demo").innerHTML = json.message
         if(json.token != null)
         {
