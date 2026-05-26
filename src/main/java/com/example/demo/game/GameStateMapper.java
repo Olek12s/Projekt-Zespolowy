@@ -11,6 +11,8 @@ public class GameStateMapper
     // including board representation and game status (check, mate, stalemate)
     // for client's frontend
     public GameState map(GameRoom room) {
+        room.updateClock();
+
         MoveValidator.Chessboard board = room.getBoard();
         String[][] array = new String[8][8];
 
@@ -45,6 +47,6 @@ public class GameStateMapper
             winner = room.isWhiteToMove() ? "BLACK" : "WHITE";
         }
 
-        return new GameState(room.getGameId(), array, room.isWhiteToMove(), room.getLastMove(), check, checkmate, stalemate, winner);
+        return new GameState(room.getGameId(), array, room.isWhiteToMove(), room.getLastMove(), check, checkmate, stalemate, winner, room.getWhiteTimeMs(), room.getBlackTimeMs());
     }
 }

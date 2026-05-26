@@ -17,6 +17,9 @@ public class GameRoom
 
     private boolean whiteToMove = true;
     private String lastMove;
+    private long whiteTimeMs = 10 * 60 * 1000;
+    private long blackTimeMs = 10 * 60 * 1000;
+    private long lastClockUpdateMs = System.currentTimeMillis();
 
     public GameRoom(String gameId) {
         this.gameId = gameId;
@@ -25,6 +28,9 @@ public class GameRoom
 
     // LEAVE IT SYNCHRONIZED TO PREVENT RACE CONDITIONS BETWEEN 2 REQUESTS AT THE SAME TIME
     public synchronized boolean makeMove(String playerId, String move) {
+        updateClock();
+        if (whiteTimeMs <= 0 || blackTimeMs <= 0) return false;
+
         boolean isWhite = playerId.equals(whitePlayerId);
         if (whiteToMove != isWhite) return false;
         if (!validator.isMoveLegalUCI(board, move, whiteToMove)) return false;
@@ -32,12 +38,26 @@ public class GameRoom
         MoveValidator.Move m = validator.parseMove(move);
         if (m == null) return false;
 
+        lastMove = validator.toSAN(board, m, whiteToMove);
         board.makeMove(m);
-        lastMove = move;
 
         whiteToMove = !whiteToMove; // swap move turn
+        lastClockUpdateMs = System.currentTimeMillis();
         System.out.println("MOVE by " + playerId);
         return true;
+    }
+
+    public synchronized void updateClock() {
+        long now = System.currentTimeMillis();
+        long elapsed = now - lastClockUpdateMs;
+
+        if (whiteToMove) {
+            whiteTimeMs = Math.max(0, whiteTimeMs - elapsed);
+        } else {
+            blackTimeMs = Math.max(0, blackTimeMs - elapsed);
+        }
+
+        lastClockUpdateMs = now;
     }
 
     public boolean hasFreeSlot() {
@@ -53,6 +73,8 @@ public class GameRoom
     public void setWhiteToMove(boolean whiteToMove) {this.whiteToMove = whiteToMove;}
     public String getLastMove() {return lastMove;}
     public void setLastMove(String lastMove) {this.lastMove = lastMove;}
+    public long getWhiteTimeMs() {return whiteTimeMs;}
+    public long getBlackTimeMs() {return blackTimeMs;}
 
     public String assignColor(String playerId) {
         if (whitePlayerId == null) {
