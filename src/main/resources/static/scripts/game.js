@@ -7,6 +7,12 @@ let selectedPiece = null;
 
 let chatOpen = false;
 
+let clockState = null;
+let clockInterval = null;
+
+let lastListedMove = null;
+let moveCount = 0;
+
 function connect() {
     const socket = new SockJS(`http://localhost:8089/ws?token=${token}`);   // ????????????????????????????????????????? safe ??????????????????????????????
     stompClient = Stomp.over(socket);
@@ -91,6 +97,7 @@ function toChess(col, row) {
 
 function renderBoard(state) {
     const board = state.board;
+    updateChessClock(state);
 
     for (let r = 0; r < 8; r++) {
         for (let c = 0; c < 8; c++) {
@@ -109,6 +116,10 @@ function renderBoard(state) {
                 cell.appendChild(img);
             }
         }
+    }
+    if (state.lastMove && state.lastMove !== lastListedMove) {
+        addMoveToList(state.lastMove, !state.whiteToMove);
+        lastListedMove = state.lastMove;
     }
 }
 
@@ -178,6 +189,68 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Enter') sendChat();
     });
 });
+
+function updateChessClock(state) {
+    clockState = {
+        whiteTimeMs: state.whiteTimeMs,
+        blackTimeMs: state.blackTimeMs,
+        whiteToMove: state.whiteToMove,
+        receivedAt: Date.now()
+    };
+
+    renderClocks();
+
+    if (!clockInterval) {
+        clockInterval = setInterval(renderClocks, 1000);
+    }
+}
+
+function renderClocks() {
+    if (!clockState) return;
+
+    const elapsed = Date.now() - clockState.receivedAt;
+    const whiteTimeMs = clockState.whiteToMove
+        ? Math.max(0, clockState.whiteTimeMs - elapsed)
+        : clockState.whiteTimeMs;
+    const blackTimeMs = clockState.whiteToMove
+        ? clockState.blackTimeMs
+        : Math.max(0, clockState.blackTimeMs - elapsed);
+
+    document.getElementById("white-timer").textContent = formatClock(whiteTimeMs);
+    document.getElementById("black-timer").textContent = formatClock(blackTimeMs);
+
+    document.querySelector(".white-clock").classList.toggle("active-clock", clockState.whiteToMove);
+    document.querySelector(".black-clock").classList.toggle("active-clock", !clockState.whiteToMove);
+}
+
+function formatClock(timeMs) {
+    const totalSeconds = Math.ceil(timeMs / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+function addMoveToList(move, isWhite) {
+    const list = document.getElementById("move-list");
+    if (isWhite) {
+        moveCount++;
+        const row = document.createElement("div");
+        row.id = `move-row-${moveCount}`;
+        row.style.display = "flex";
+        row.style.gap = "10px";
+        row.innerHTML = `<span style="color:gray">${moveCount}.</span><span id="white-${moveCount}">${move}</span>`;
+        list.appendChild(row);
+    } else {
+        const whiteSpan = document.getElementById(`white-${moveCount}`);
+        if (whiteSpan) {
+            const blackSpan = document.createElement("span");
+            blackSpan.textContent = move;
+            whiteSpan.parentElement.appendChild(blackSpan);
+        }
+    }
+    list.scrollTop = list.scrollHeight;
+}
 
 window.onload = function () {
     if (!gameId) {

@@ -11,8 +11,6 @@ public class GameStateMapper
     // including board representation and game status (check, mate, stalemate)
     // for client's frontend
     public GameState map(GameRoom room) {
-        room.updateClock();
-
         MoveValidator.Chessboard board = room.getBoard();
         String[][] array = new String[8][8];
 

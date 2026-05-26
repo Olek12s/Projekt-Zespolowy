@@ -8,6 +8,7 @@ import com.example.demo.game.GameState;
 import com.example.demo.game.GameStateMapper;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.GameResultService;
 import com.example.demo.service.GameRoomManager;
 import com.example.demo.service.MatchmakingQueue;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -26,7 +27,7 @@ public class GameWebSocketController {
     private final UserRepository userRepository;
 
 
-    public GameWebSocketController(GameRoomManager manager, GameStateMapper mapper, SimpMessagingTemplate messagingTemplate, MatchmakingQueue matchmakingQueue, UserRepository userRepository) {
+    public GameWebSocketController(GameRoomManager manager, GameStateMapper mapper, SimpMessagingTemplate messagingTemplate, MatchmakingQueue matchmakingQueue, UserRepository userRepository, GameResultService gameResultService) {
         this.manager = manager;
         this.mapper = mapper;
         this.messagingTemplate = messagingTemplate;

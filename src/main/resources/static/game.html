@@ -13,8 +13,6 @@
 
 <body>
 
-<div id="board" class="board"></div>
-
 <div class="chat-bubble">
     <button class="chat-toggle-btn" onclick="toggleChat()">Czat ▲</button>
     <div id="chatPanel" class="chat-panel">
@@ -23,6 +21,20 @@
             <input id="chat-input" type="text" />
             <button onclick="sendChat()">Wyślij</button>
         </div>
+    </div>
+</div>
+<div class="game-layout">
+    <div id="board" class="board"></div>
+    <div class="sidebar">
+        <div class="clock black-clock">
+            <span>Black</span>
+            <span id="black-timer">10:00</span>
+        </div>
+        <div class="clock white-clock">
+            <span>White</span>
+            <span id="white-timer">10:00</span>
+        </div>
+        <div id="move-list"></div>
     </div>
 </div>
 
