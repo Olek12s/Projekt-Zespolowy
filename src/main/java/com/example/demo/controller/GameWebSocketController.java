@@ -48,6 +48,7 @@ public class GameWebSocketController {
         if (!success) return;
 
         GameState state = mapper.map(room);
+
         messagingTemplate.convertAndSend("/topic/game/" + msg.getGameId(), state);
     }
 

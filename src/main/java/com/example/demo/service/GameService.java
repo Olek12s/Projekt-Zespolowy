@@ -93,6 +93,8 @@ public class GameService {
         userRepository.save(game.getWhitePlayer());
         userRepository.save(game.getBlackPlayer());
         gameRepository.save(game);
+
+        System.out.println("Game: " + game.getId() + " Finished.");
     }
 
     // TODO: finish
