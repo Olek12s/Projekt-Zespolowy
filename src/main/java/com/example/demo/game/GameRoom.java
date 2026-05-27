@@ -2,7 +2,10 @@ package com.example.demo.game;
 
 import com.example.demo.util.MoveValidator;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class GameRoom
@@ -14,6 +17,8 @@ public class GameRoom
 
     private final MoveValidator validator = new MoveValidator();
     private final MoveValidator.Chessboard board = validator.new Chessboard();
+    private final List<String> moves = new ArrayList<>();
+    private final LocalDateTime createdAt = LocalDateTime.now();
 
     private boolean whiteToMove = true;
     private String lastMove;
@@ -40,6 +45,7 @@ public class GameRoom
 
         lastMove = validator.toSAN(board, m, whiteToMove);
         board.makeMove(m);
+        moves.add(move);
 
         whiteToMove = !whiteToMove; // swap move turn
         lastClockUpdateMs = System.currentTimeMillis();
@@ -75,6 +81,8 @@ public class GameRoom
     public void setLastMove(String lastMove) {this.lastMove = lastMove;}
     public long getWhiteTimeMs() {return whiteTimeMs;}
     public long getBlackTimeMs() {return blackTimeMs;}
+    public List<String> getMoves() {return moves;}
+    public LocalDateTime getCreatedAt() {return createdAt;}
 
     public String assignColor(String playerId) {
         if (whitePlayerId == null) {
