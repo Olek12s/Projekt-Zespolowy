@@ -58,9 +58,9 @@ public class GameService {
         int total = allGames.size();
         int won = wins.size();
         int lost = (int) allGames.stream().filter(g -> {
-                    Optional<GameResult> result = gameResultRepository.findById(g.getId());
-                    return result.isPresent() && result.get().getWinner() !=null && !result.get().getWinner().getId().equals(userId);
-                }).count();
+            Optional<GameResult> result = gameResultRepository.findById(g.getId());
+            return result.isPresent() && result.get().getWinner() !=null && !result.get().getWinner().getId().equals(userId);
+        }).count();
         int drawn = total - won - lost;
 
         Map<String, Object> stats = new HashMap<>();
@@ -75,7 +75,6 @@ public class GameService {
 
     @Transactional
     public void finishGame(Game game, GameResult result) {
-
         MatchOutcome outcome = resolveOutcome(result, game);
 
         game.setFinishedAt(LocalDateTime.now());

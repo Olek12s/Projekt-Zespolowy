@@ -47,10 +47,6 @@ public class GameResultService {
         Game game = gameRepository.findById(result.getGameId())
                 .orElseThrow();
 
-        if (game.getFinishedAt() != null) { // double finish protection (double elo gain/loss)
-            return gameResultRepository.save(result);
-        }
-
         GameResult saved = gameResultRepository.save(result);
         gameService.finishGame(game, result);
 
