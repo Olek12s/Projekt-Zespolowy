@@ -33,6 +33,52 @@ public class GameService {
         this.userRepository = userRepository;
     }
 
+    public List<Game> getGamesByUser(String userId) {
+        return gameRepository
+                .findByWhitePlayer_IdOrBlackPlayer_IdOrderByCreatedAtDesc(userId, userId);
+    }
+
+    public List<Game> getLastGames(int limit) {
+        return switch (limit) {
+            case 5 -> gameRepository.findTop5ByOrderByCreatedAtDesc();
+            case 10 -> gameRepository.findTop10ByOrderByCreatedAtDesc();
+            case 15 -> gameRepository.findTop15ByOrderByCreatedAtDesc();
+            case 30 -> gameRepository.findTop30ByOrderByCreatedAtDesc();
+            default -> throw new IllegalArgumentException(
+                    "Allowed values: 5,10,15,30"
+            );
+        };
+    }
+
+    public List<Game> getLastGamesByUser(String userId, int limit) {
+
+        List<Game> games = gameRepository
+                .findByWhitePlayer_IdOrBlackPlayer_IdOrderByCreatedAtDesc(userId, userId);
+
+        return games.stream()
+                .limit(limit)
+                .toList();
+    }
+
+    public List<GameResult> getWonGames(String userId) {
+        return gameResultRepository.findByWinner_Id(userId);
+    }
+
+    public List<GameResult> getLostGames(String userId) {
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        return gameResultRepository.findAll()
+                .stream().filter(result ->
+                        result.getWinner() != null && !result.getWinner().getId().equals(userId)).filter(result -> {
+                    Game game = gameRepository.findById(result.getGameId()).orElse(null);
+                    return game != null &&
+                            (
+                                    game.getWhitePlayer().getId().equals(userId) || game.getBlackPlayer().getId().equals(userId)
+                            );
+                }).toList();
+    }
+
     public List<Game> getAll() {
         return gameRepository.findAll();
     }

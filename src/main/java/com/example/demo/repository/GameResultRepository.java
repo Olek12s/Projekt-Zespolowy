@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface GameResultRepository extends JpaRepository<GameResult, String> {
     List<GameResult> findByWinner(User winner);
+
+    List<GameResult> findByWinner_Id(String winnerId);
 }

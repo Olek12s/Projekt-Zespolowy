@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Game;
+import com.example.demo.model.GameResult;
 import com.example.demo.service.GameService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,31 @@ public class GameController {
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
+    }
+
+    @GetMapping("/player/{userId}")
+    public ResponseEntity<List<Game>> getGamesByUser(@PathVariable String userId) {
+        return ResponseEntity.ok(gameService.getGamesByUser(userId));
+    }
+
+    @GetMapping("/recent/{count}")
+    public ResponseEntity<List<Game>> getRecentGames(@PathVariable int count) {
+        return ResponseEntity.ok(gameService.getLastGames(count));
+    }
+
+    @GetMapping("/player/{userId}/recent/{count}")
+    public ResponseEntity<List<Game>> getRecentGamesByUser(@PathVariable String userId, @PathVariable int count) {
+        return ResponseEntity.ok(gameService.getLastGamesByUser(userId, count));
+    }
+
+    @GetMapping("/player/{userId}/won")
+    public ResponseEntity<List<GameResult>> getWonGames(@PathVariable String userId) {
+        return ResponseEntity.ok(gameService.getWonGames(userId));
+    }
+
+    @GetMapping("/player/{userId}/lost")
+    public ResponseEntity<List<GameResult>> getLostGames(@PathVariable String userId) {
+        return ResponseEntity.ok(gameService.getLostGames(userId));
     }
 
     @PostMapping
