@@ -144,4 +144,8 @@ public class GameService {
 
     // TODO: finish
     public void terminateGame(String gameId) {}
+
+    public List<Game> getHistoryForUser(User user, int n) {
+        return getLastGamesByUser(user.getId(), n);
+    }
 }
