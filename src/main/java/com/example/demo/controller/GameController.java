@@ -6,6 +6,10 @@ import com.example.demo.service.GameService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.example.demo.dto.GameHistoryEntry;
+import com.example.demo.model.User;
+import com.example.demo.service.UserService;
+import java.security.Principal;
 
 import java.util.List;
 import java.util.Map;
@@ -15,9 +19,11 @@ import java.util.Map;
 public class GameController {
 
     private final GameService gameService;
+    private final UserService userService;
 
-    public GameController(GameService gameService) {
+    public GameController(GameService gameService, UserService userService) {
         this.gameService = gameService;
+        this.userService = userService;
     }
 
     @GetMapping("/{id}/pgn")
@@ -92,5 +98,23 @@ public class GameController {
         }
     }
 
+    @GetMapping("/history")
+    public ResponseEntity<?> getHistory(@RequestParam(defaultValue = "10") int n, Principal principal) {
+        User user = userService.findByLogin(principal.getName()).orElse(null);
+        if (user == null) return ResponseEntity.notFound().build();
 
+        List<GameHistoryEntry> history = gameService.getHistoryForUser(user, n)
+                .stream()
+                .map(g -> new GameHistoryEntry(
+                        g.getId(),
+                        g.getWhitePlayer().getLogin(),
+                        g.getBlackPlayer().getLogin(),
+                        g.getPgn(),
+                        g.getCreatedAt(),
+                        g.getFinishedAt()
+                ))
+                .toList();
+
+        return ResponseEntity.ok(history);
+    }
 }
