@@ -47,3 +47,8 @@ function playButtonClicked()
         client.send("/app/join", {}, {});
     }
 }
+
+function historyButtonClicked()
+{
+    window.location = "history.html"
+}

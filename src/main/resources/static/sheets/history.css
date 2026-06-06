@@ -1,0 +1,30 @@
+body
+{
+    align-content: center;
+    background-color: lightgray;
+}
+
+.historyTable
+{
+    align-self: center;
+}
+
+.topRow
+{
+    color:brown
+}
+
+.topCell
+{
+    align-items: start;
+}
+
+.historyRow
+{
+    background-color: chocolate;
+}
+
+.historyCell
+{
+    align-items: center;
+}

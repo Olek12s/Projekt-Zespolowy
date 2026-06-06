@@ -4,7 +4,15 @@
         <script src="scripts/history.js"></script>
         <link rel="stylesheet" href = "sheets/history.css">
     </head>
-    <body onload="getUserHistory()">
-
+    <body onload="getHistoryGames()">
+        <table class="historyTable", id="historyTable">
+            <tr class="topRow">
+                <td class="topCell">White Player:</td>
+                <td class="topCell">Black Player:</td>
+                <td class="topCell">Started At:</td>
+                <td class="topCell">Finished At:</td>
+                <td class="topCell">Moves:</td>
+            </tr>
+        </table>
     </body>
 </html>
