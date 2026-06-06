@@ -135,29 +135,22 @@ public class GameWebSocketController {
         // game.setPgn(pgn);
 
         // SAN
-        MoveValidator validator = new MoveValidator();
-        MoveValidator.Chessboard board = validator.new Chessboard();
-
-        List<String> moves = room.getMoves();
+        List<String> moves = room.getSanMoves();
 
         StringBuilder pgn = new StringBuilder();
 
         int fullMove = 1;
 
         for (int i = 0; i < moves.size(); i++) {
-            String uci = moves.get(i);
-
-            MoveValidator.Move move = validator.parseMove(uci);
-            if (move == null) continue;
-
-            String san = validator.toSAN(board, move, i % 2 == 0);
-
-            board.makeMove(move);
 
             if (i % 2 == 0) {
-                pgn.append(fullMove).append(". ").append(san).append(" ");
+                pgn.append(fullMove)
+                        .append(". ")
+                        .append(moves.get(i))
+                        .append(" ");
             } else {
-                pgn.append(san).append(" ");
+                pgn.append(moves.get(i))
+                        .append(" ");
                 fullMove++;
             }
         }

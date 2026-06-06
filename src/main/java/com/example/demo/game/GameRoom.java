@@ -17,11 +17,12 @@ public class GameRoom
 
     private final MoveValidator validator = new MoveValidator();
     private final MoveValidator.Chessboard board = validator.new Chessboard();
-    private final List<String> moves = new ArrayList<>();
+    private final List<String> sanMoves = new ArrayList<>();
     private final LocalDateTime createdAt = LocalDateTime.now();
 
     private boolean whiteToMove = true;
     private String lastMove;
+
     private long whiteTimeMs = 10 * 60 * 1000;
     private long blackTimeMs = 10 * 60 * 1000;
     private long lastClockUpdateMs = System.currentTimeMillis();
@@ -45,7 +46,7 @@ public class GameRoom
 
         lastMove = validator.toSAN(board, m, whiteToMove);
         board.makeMove(m);
-        moves.add(move);
+        sanMoves.add(lastMove);
 
         whiteToMove = !whiteToMove; // swap move turn
         lastClockUpdateMs = System.currentTimeMillis();
@@ -81,8 +82,10 @@ public class GameRoom
     public void setLastMove(String lastMove) {this.lastMove = lastMove;}
     public long getWhiteTimeMs() {return whiteTimeMs;}
     public long getBlackTimeMs() {return blackTimeMs;}
-    public List<String> getMoves() {return moves;}
+    public List<String> getSanMoves() {return sanMoves;}
     public LocalDateTime getCreatedAt() {return createdAt;}
+    public Set<String> getObservers() {return observers;}
+    public long getLastClockUpdateMs() {return lastClockUpdateMs;}
 
     public String assignColor(String playerId) {
         if (whitePlayerId == null) {
