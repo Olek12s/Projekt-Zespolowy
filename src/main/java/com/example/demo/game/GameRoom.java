@@ -83,6 +83,8 @@ public class GameRoom
     public long getBlackTimeMs() {return blackTimeMs;}
     public List<String> getMoves() {return moves;}
     public LocalDateTime getCreatedAt() {return createdAt;}
+    public Set<String> getObservers() {return observers;}
+    public long getLastClockUpdateMs() {return lastClockUpdateMs;}
 
     public String assignColor(String playerId) {
         if (whitePlayerId == null) {

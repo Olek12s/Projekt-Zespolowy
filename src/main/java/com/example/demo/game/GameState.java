@@ -14,13 +14,14 @@ public class GameState
     private String winner;
     private long whiteTimeMs;
     private long blackTimeMs;
+    private long lastClockUpdateMs;
 
     public GameState() {}
 
     public GameState(String gameId, String[][] board, boolean whiteToMove,
                      String lastMove, boolean check, boolean checkmate,
                      boolean stalemate, String winner, long whiteTimeMs,
-                     long blackTimeMs) {
+                     long blackTimeMs, long lastClockUpdateMs) {
         this.gameId = gameId;
         this.board = board;
         this.whiteToMove = whiteToMove;
@@ -31,6 +32,7 @@ public class GameState
         this.winner = winner;
         this.whiteTimeMs = whiteTimeMs;
         this.blackTimeMs = blackTimeMs;
+        this.lastClockUpdateMs = lastClockUpdateMs;
     }
 
     public String getGameId() {return gameId;}
@@ -53,4 +55,6 @@ public class GameState
     public void setWhiteTimeMs(long whiteTimeMs) {this.whiteTimeMs = whiteTimeMs;}
     public long getBlackTimeMs() {return blackTimeMs;}
     public void setBlackTimeMs(long blackTimeMs) {this.blackTimeMs = blackTimeMs;}
+    public long getLastClockUpdateMs() {return lastClockUpdateMs;}
+    public void setLastClockUpdateMs(long lastClockUpdateMs) {this.lastClockUpdateMs = lastClockUpdateMs;}
 }

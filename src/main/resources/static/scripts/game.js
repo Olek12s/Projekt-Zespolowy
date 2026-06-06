@@ -195,6 +195,7 @@ function updateChessClock(state) {
         whiteTimeMs: state.whiteTimeMs,
         blackTimeMs: state.blackTimeMs,
         whiteToMove: state.whiteToMove,
+        lastClockUpdateMs: state.lastClockUpdateMs,
         receivedAt: Date.now()
     };
 
@@ -208,13 +209,16 @@ function updateChessClock(state) {
 function renderClocks() {
     if (!clockState) return;
 
-    const elapsed = Date.now() - clockState.receivedAt;
-    const whiteTimeMs = clockState.whiteToMove
-        ? Math.max(0, clockState.whiteTimeMs - elapsed)
-        : clockState.whiteTimeMs;
-    const blackTimeMs = clockState.whiteToMove
-        ? clockState.blackTimeMs
-        : Math.max(0, clockState.blackTimeMs - elapsed);
+    const elapsed = Math.max(0, Date.now() - clockState.lastClockUpdateMs);
+
+    let whiteTimeMs = clockState.whiteTimeMs;
+    let blackTimeMs = clockState.blackTimeMs;
+
+    if (clockState.whiteToMove) {
+        whiteTimeMs = Math.max(0, whiteTimeMs - elapsed);
+    } else {
+        blackTimeMs = Math.max(0, blackTimeMs - elapsed);
+    }
 
     document.getElementById("white-timer").textContent = formatClock(whiteTimeMs);
     document.getElementById("black-timer").textContent = formatClock(blackTimeMs);
