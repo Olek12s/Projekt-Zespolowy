@@ -56,6 +56,7 @@ public class GameStateMapper
                 winner,
                 room.getWhiteTimeMs(),
                 room.getBlackTimeMs(),
-                room.getLastClockUpdateMs());
+                room.getLastClockUpdateMs(),
+                room.getSanMoves());
     }
 }

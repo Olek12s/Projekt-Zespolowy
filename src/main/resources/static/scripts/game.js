@@ -117,10 +117,46 @@ function renderBoard(state) {
             }
         }
     }
-    if (state.lastMove && state.lastMove !== lastListedMove) {
-        addMoveToList(state.lastMove, !state.whiteToMove);
-        lastListedMove = state.lastMove;
+    renderMoveList(state.moves);
+}
+
+// temporary
+function renderMoveList(moves) {
+    const list = document.getElementById("move-list");
+    list.innerHTML = ""; // reset
+
+    moveCount = 0;
+
+    for (let i = 0; i < moves.length; i++) {
+        const move = moves[i];
+
+        const isWhite = i % 2 === 0;
+
+        if (isWhite) {
+            moveCount++;
+
+            const row = document.createElement("div");
+            row.id = `move-row-${moveCount}`;
+            row.style.display = "flex";
+            row.style.gap = "10px";
+
+            row.innerHTML =
+                `<span style="color:gray">${moveCount}.</span>
+                 <span id="white-${moveCount}">${move}</span>`;
+
+            list.appendChild(row);
+
+        } else {
+            const whiteSpan = document.getElementById(`white-${moveCount}`);
+            if (whiteSpan) {
+                const blackSpan = document.createElement("span");
+                blackSpan.textContent = move;
+                whiteSpan.parentElement.appendChild(blackSpan);
+            }
+        }
     }
+
+    list.scrollTop = list.scrollHeight;
 }
 
 function getImage(piece) {

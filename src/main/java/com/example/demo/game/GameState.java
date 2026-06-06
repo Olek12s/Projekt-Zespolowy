@@ -1,11 +1,15 @@
 package com.example.demo.game;
 
+import java.util.List;
+
 public class GameState
 {
     private String gameId;
     private String[][] board;
     private boolean whiteToMove;
     private String lastMove;
+
+    private List<String> moves;
 
     private boolean check;
     private boolean checkmate;
@@ -21,7 +25,8 @@ public class GameState
     public GameState(String gameId, String[][] board, boolean whiteToMove,
                      String lastMove, boolean check, boolean checkmate,
                      boolean stalemate, String winner, long whiteTimeMs,
-                     long blackTimeMs, long lastClockUpdateMs) {
+                     long blackTimeMs, long lastClockUpdateMs,
+                     List<String> moves) {
         this.gameId = gameId;
         this.board = board;
         this.whiteToMove = whiteToMove;
@@ -33,6 +38,7 @@ public class GameState
         this.whiteTimeMs = whiteTimeMs;
         this.blackTimeMs = blackTimeMs;
         this.lastClockUpdateMs = lastClockUpdateMs;
+        this.moves = moves;
     }
 
     public String getGameId() {return gameId;}
@@ -57,4 +63,5 @@ public class GameState
     public void setBlackTimeMs(long blackTimeMs) {this.blackTimeMs = blackTimeMs;}
     public long getLastClockUpdateMs() {return lastClockUpdateMs;}
     public void setLastClockUpdateMs(long lastClockUpdateMs) {this.lastClockUpdateMs = lastClockUpdateMs;}
+    public List<String> getMoves() {return moves;}
 }
