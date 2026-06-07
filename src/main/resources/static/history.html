@@ -5,6 +5,8 @@
         <link rel="stylesheet" href = "sheets/history.css">
     </head>
     <body onload="getHistoryGames()">
+        <button onclick="goBack()">Go Back</button>
+        <p>Recent games displayed: <input type="number", id="gamesDisplayed", min="1"><button onclick="refreshHistoryGames()">apply</button></p>
         <table class="historyTable", id="historyTable">
             <tr class="topRow">
                 <td class="topCell">White Player:</td>
