@@ -38,6 +38,12 @@ public class GameService {
                 .findByWhitePlayer_IdOrBlackPlayer_IdOrderByCreatedAtDesc(userId, userId);
     }
 
+    public boolean isGameFinished(String gameId) {
+        return gameRepository.findById(gameId)
+                .map(game -> game.getFinishedAt() != null)
+                .orElse(false);
+    }
+
     public List<Game> getLastGames(int limit) {
         return switch (limit) {
             case 5 -> gameRepository.findTop5ByOrderByCreatedAtDesc();

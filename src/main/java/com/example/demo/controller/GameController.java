@@ -117,4 +117,47 @@ public class GameController {
 
         return ResponseEntity.ok(history);
     }
+
+    @GetMapping("/{id}/status")
+    public ResponseEntity<?> getGameStatus(@PathVariable String id) {
+        if (!gameService.getById(id).isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "gameId", id,
+                "finished", gameService.isGameFinished(id)
+        ));
+    }
+
+    @GetMapping("/{id}/active")
+    public ResponseEntity<?> isActive(@PathVariable String id) {
+        return gameService.getById(id)
+                .map(game -> ResponseEntity.ok(game.getFinishedAt() == null))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}/state")
+    public ResponseEntity<?> getGameState(@PathVariable String id) {
+
+        return gameService.getById(id)
+                .map(game -> {
+                    boolean finished = game.getFinishedAt() != null;
+
+                    return ResponseEntity.ok(Map.of(
+                            "exists", true,
+                            "gameId", game.getId(),
+                            "status", finished ? "FINISHED" : "IN_PROGRESS",
+                            "finished", finished,
+                            "active", !finished
+                    ));
+                })
+                .orElse(ResponseEntity.ok(Map.of(
+                        "exists", false,
+                        "gameId", id,
+                        "status", "NOT_FOUND",
+                        "finished", false,
+                        "active", false
+                )));
+    }
 }
