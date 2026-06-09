@@ -28,3 +28,8 @@ function signIn()
         }
     });
 }
+
+function register()
+{
+    window.location = "accountCreation.html"
+}
