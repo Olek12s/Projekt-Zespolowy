@@ -21,6 +21,7 @@ function signIn()
     {
         console.log(json);
         sessionStorage.setItem("token", json.token);
+        sessionStorage.setItem("login", login);
         document.getElementById("demo").innerHTML = json.message
         if(json.token != null)
         {

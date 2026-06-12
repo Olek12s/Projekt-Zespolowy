@@ -1,5 +1,10 @@
 let client = null;
 
+function onLoad()
+{
+    document.getElementById("topBarAccountName").innerHTML=sessionStorage.getItem("login")
+}
+
 function connectWebSocket() 
 {
     const token = sessionStorage.getItem("token");

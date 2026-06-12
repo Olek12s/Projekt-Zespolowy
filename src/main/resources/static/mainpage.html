@@ -6,10 +6,10 @@
         <script src="scripts/mainpage.js"></script>
         <link rel="stylesheet" href = "sheets/mainpage.css">
     </head>
-    <body>
+    <body onload="onLoad()">
         <div class="top">
             <img src="images/common/profilepic.jpg" class="profileImage">
-            <button class="topbarButton" onclick="myAccountButtonClicked()">My Account</button>
+            <button id="topBarAccountName" class="topbarButton" onclick="myAccountButtonClicked()">My Account</button>
         </div>
         <div class="center">
             <button class="mainMenuButton" onclick="playButtonClicked()">Play</button>

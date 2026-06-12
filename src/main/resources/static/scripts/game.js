@@ -23,6 +23,22 @@ function connect() {
         stompClient.subscribe('/topic/game/' + gameId, function (msg) {
             const state = JSON.parse(msg.body);
             renderBoard(state);
+            fetch("http://127.0.0.1:8089/api/games/"+gameId+"/state",
+            {
+                headers:
+                {
+                    "accept": "*/*"
+                }
+            })
+            .then((response)=>response.json())
+            .then((json)=>
+            {
+                if(json.status == "FINISHED")
+                {
+                    alert("GAME OVER")
+                    window.location = "mainpage.html"
+                }
+            })
      });
 
         stompClient.subscribe('/user/queue/state', function (msg) {
@@ -43,7 +59,6 @@ function connect() {
 
         stompClient.send("/app/state", {}, {});
     });
-
 }
 
 function sendMove(from, to) {
